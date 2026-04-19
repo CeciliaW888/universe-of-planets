@@ -1,0 +1,2642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Universe of Planets 宇宙行星图</title>
+  <meta name="description" content="A bilingual interactive universe of planets for kids and astrophysics-curious explorers, with an atmospheric music track and narrated immersive planet stories." />
+  <style>
+    :root {
+      --bg: #060816;
+      --panel: rgba(13, 18, 40, 0.74);
+      --panel-strong: rgba(8, 12, 28, 0.9);
+      --line: rgba(255,255,255,0.09);
+      --text: #edf4ff;
+      --muted: #99a9c8;
+      --accent: #8b7cff;
+      --accent-2: #46d7ff;
+      --accent-3: #ffb15c;
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+      --radius: 24px;
+      --hero-color: #f4d9a0;
+      --hero-glow: rgba(244,217,160,.5);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #131b44 0%, #090d20 34%, #04050b 100%);
+      color: var(--text);
+      overflow: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(130, 100, 255, 0.18), transparent 20%),
+        radial-gradient(circle at 80% 15%, rgba(70, 215, 255, 0.12), transparent 18%),
+        radial-gradient(circle at 50% 90%, rgba(255, 177, 92, 0.10), transparent 18%);
+    }
+
+    .stars, .stars::before, .stars::after {
+      position: fixed;
+      inset: 0;
+      content: "";
+      pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.95), transparent),
+        radial-gradient(1.5px 1.5px at 90px 120px, rgba(255,255,255,.65), transparent),
+        radial-gradient(1px 1px at 160px 80px, rgba(255,255,255,.7), transparent),
+        radial-gradient(1px 1px at 230px 170px, rgba(255,255,255,.5), transparent),
+        radial-gradient(2px 2px at 300px 50px, rgba(139,124,255,.8), transparent);
+      background-size: 320px 220px;
+      animation: drift 80s linear infinite;
+      opacity: .55;
+    }
+    .stars::before { transform: scale(1.3); opacity: .35; animation-duration: 120s; }
+    .stars::after { transform: scale(1.7); opacity: .2; animation-duration: 180s; }
+
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-320px, 220px, 0); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: .72; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+    @keyframes floatStage {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes slowSpin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    @keyframes spinOnly {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes beamSweep {
+      0%, 100% { opacity: .28; transform: rotate(0deg) scale(1); }
+      50% { opacity: .75; transform: rotate(180deg) scale(1.07); }
+    }
+    @keyframes shimmer {
+      0%, 100% { opacity: .35; transform: translateY(0px) scale(1); }
+      50% { opacity: .9; transform: translateY(-12px) scale(1.08); }
+    }
+    @keyframes overlayIn {
+      from { opacity: 0; transform: scale(.985); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes panelRise {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .app {
+      position: relative;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        "top top"
+        "map side"
+        "detail side"
+        "filters filters";
+      gap: 16px;
+      padding: 18px;
+    }
+    .glass {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      grid-area: top;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+    }
+    .title-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .eyebrow { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--accent-2); }
+    h1 { margin: 0; font-size: clamp(24px, 4vw, 42px); line-height: 1.05; }
+    .subtitle { color: var(--muted); font-size: 14px; max-width: 760px; line-height: 1.5; }
+    .stat-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pill strong { color: var(--text); font-size: 15px; margin-right: 6px; }
+
+    .map-panel {
+      grid-area: map;
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .map-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: inherit;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(27, 35, 74, 0.95) 0%, rgba(8, 10, 24, 0.98) 54%, #04050b 100%),
+        linear-gradient(135deg, rgba(255,255,255,.03), transparent 40%);
+    }
+    .orbit-grid {
+      position: absolute;
+      inset: 5% 4%;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow:
+        0 0 0 80px rgba(255,255,255,0.02),
+        0 0 0 160px rgba(255,255,255,0.015),
+        0 0 0 240px rgba(255,255,255,0.01);
+      opacity: .65;
+      pointer-events: none;
+    }
+    .map-vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(255,180,90,.10), transparent 22%),
+        radial-gradient(circle at 75% 30%, rgba(70,215,255,.10), transparent 20%),
+        linear-gradient(180deg, transparent, rgba(0,0,0,.28));
+    }
+    svg#universe { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .node {
+      cursor: pointer;
+      transition: transform .25s ease, opacity .25s ease;
+      transform-origin: center;
+    }
+    .node.hidden { opacity: .12; pointer-events: none; }
+    .node.active { filter: drop-shadow(0 0 18px rgba(255,255,255,.18)); }
+    .node.active .planet-core { stroke: #fff; stroke-width: 2.4; }
+    .node.active .planet-glow { opacity: 1; animation: pulseGlow 2.2s ease-in-out infinite; }
+    .planet-glow { filter: blur(18px); opacity: .75; }
+    .planet-core { transition: transform .25s ease; transform-origin: center; }
+    .node:hover .planet-core { transform: scale(1.07); }
+    .planet-label {
+      font-size: 13px;
+      fill: rgba(237,244,255,.92);
+      font-weight: 700;
+      paint-order: stroke;
+      stroke: rgba(5,8,20,.9);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+    .planet-sub { font-size: 11px; fill: rgba(153,169,200,.95); }
+    .link-line { stroke: rgba(115, 145, 255, 0.28); stroke-width: 1.2; stroke-dasharray: 5 8; opacity: .65; }
+    .sun-ray {
+      stroke: rgba(255, 196, 92, .65);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      opacity: .82;
+    }
+
+    .controls {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      z-index: 2;
+    }
+    .mode-toggle, .lang-toggle, .music-toggle {
+      display: inline-flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(9, 14, 30, 0.74);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .mode-btn, .lang-btn, .music-btn, .chip, .detail-action, .overlay-btn, .narration-btn, .overlay-icon-btn {
+      border: none;
+      color: var(--text);
+      background: transparent;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      transition: .2s ease;
+    }
+    .mode-btn.active, .lang-btn.active, .music-btn.active, .chip.active, .detail-action.primary, .overlay-btn.primary, .narration-btn.active {
+      background: linear-gradient(135deg, rgba(139,124,255,.95), rgba(70,215,255,.9));
+      color: white;
+      box-shadow: 0 8px 24px rgba(90,100,255,0.38);
+    }
+    .overlay-icon-btn {
+      width: 46px;
+      height: 46px;
+      padding: 0;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      font-size: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .overlay-icon-btn:hover,
+    .detail-action:hover,
+    .overlay-btn:hover,
+    .narration-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.12);
+    }
+
+    .map-caption {
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      max-width: 510px;
+      padding: 14px 16px;
+      z-index: 2;
+    }
+    .map-caption strong { display: block; margin-bottom: 6px; }
+    .map-caption p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+    .sidebar {
+      grid-area: side;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 16px;
+      gap: 14px;
+    }
+    .side-head h2 { margin: 0; font-size: 20px; }
+    .side-head p { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .search {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      outline: none;
+    }
+    .world-list { overflow: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
+    .world-card {
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: .2s ease;
+    }
+    .world-card:hover, .world-card.active {
+      transform: translateY(-1px);
+      border-color: rgba(139,124,255,.52);
+      background: rgba(139,124,255,0.1);
+    }
+    .world-card-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .world-card h3 { margin: 0; font-size: 15px; }
+    .world-card small { color: var(--muted); display: block; margin-top: 3px; }
+    .world-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .detail-panel {
+      grid-area: detail;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr) minmax(220px, 260px);
+      gap: 18px;
+      align-items: center;
+    }
+    .planet-hero {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: inset -18px -18px 40px rgba(0,0,0,.35), 0 0 50px rgba(139,124,255,.35);
+      animation: floatStage 4s ease-in-out infinite;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), var(--hero-color) 42%, rgba(0,0,0,.82) 100%);
+    }
+    .planet-hero::before,
+    .planet-hero::after {
+      content: "";
+      position: absolute;
+      inset: -16px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, var(--hero-glow), transparent 62%);
+      filter: blur(18px);
+      opacity: .48;
+      z-index: -1;
+      animation: pulseGlow 2.6s ease-in-out infinite;
+    }
+    .planet-hero::after {
+      inset: 12%;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.3), transparent 48%),
+        radial-gradient(circle, rgba(255,255,255,.22), transparent 50%);
+      filter: none;
+      opacity: .55;
+      mix-blend-mode: screen;
+      z-index: 1;
+    }
+    .detail-copy h2 { margin: 0; font-size: clamp(24px, 3vw, 32px); }
+    .detail-copy .meta { margin-top: 8px; color: var(--muted); font-size: 14px; }
+    .detail-copy p { margin: 12px 0 0; color: #dbe7ff; line-height: 1.65; font-size: 14px; }
+    .detail-copy-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .detail-action {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+    }
+    .detail-facts { display: grid; gap: 8px; }
+    .fact-box {
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .fact-box strong { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+    .fact-box span { font-size: 14px; color: var(--text); }
+
+    .filters {
+      grid-area: filters;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 14px 16px;
+    }
+    .filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .filter-group label { font-size: 12px; text-transform: uppercase; letter-spacing: .18em; color: var(--muted); }
+    .chip {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      padding: 9px 12px;
+    }
+    .legend-dot { width: 10px; height: 10px; border-radius: 999px; display: inline-block; margin-right: 6px; }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .28s ease;
+    }
+    .overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .overlay-backdrop {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,173,88,.18), transparent 20%),
+        radial-gradient(circle at 80% 18%, rgba(70,215,255,.16), transparent 20%),
+        linear-gradient(180deg, rgba(3,5,16,.25), rgba(3,5,16,.9));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .overlay-shell {
+      position: relative;
+      width: min(1180px, 100%);
+      height: min(88vh, 860px);
+      display: grid;
+      grid-template-columns: minmax(300px, 1.05fr) minmax(0, .95fr);
+      gap: 18px;
+      padding: 18px;
+      border-radius: 34px;
+      border: 1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(145deg, rgba(17, 23, 52, .88), rgba(8, 10, 24, .92)),
+        radial-gradient(circle at 16% 16%, rgba(255,255,255,.06), transparent 20%);
+      box-shadow: 0 40px 120px rgba(0,0,0,.55);
+      animation: overlayIn .3s ease;
+      overflow: hidden;
+    }
+    .overlay-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at var(--spot-x, 18%) var(--spot-y, 24%), rgba(255,255,255,.07), transparent 24%);
+      pointer-events: none;
+    }
+    .overlay-topbar {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+    }
+    .overlay-topbar-left,
+    .overlay-topbar-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .overlay-btn {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      font-weight: 600;
+    }
+    .overlay-scene,
+    .overlay-copy {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      border-radius: 28px;
+      overflow: hidden;
+      animation: panelRise .4s ease;
+    }
+    .overlay-scene {
+      background:
+        radial-gradient(circle at 38% 34%, rgba(255,255,255,.12), transparent 18%),
+        radial-gradient(circle at 50% 60%, rgba(70,215,255,.12), transparent 28%),
+        linear-gradient(180deg, rgba(4, 8, 26, .92), rgba(5, 6, 14, .98));
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 70px 26px 26px;
+      display: grid;
+      align-items: center;
+      justify-items: center;
+    }
+    .overlay-scene-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.06), transparent 24%),
+        conic-gradient(from 0deg, rgba(255,255,255,.04), transparent 28%, rgba(255,255,255,.03), transparent 65%, rgba(255,255,255,.06));
+      opacity: .65;
+      animation: spinOnly 16s linear infinite;
+    }
+    .overlay-orbit,
+    .overlay-orbit::before,
+    .overlay-orbit::after {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(68vmin, 430px);
+      height: min(68vmin, 430px);
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.08);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .overlay-orbit::before,
+    .overlay-orbit::after {
+      content: "";
+    }
+    .overlay-orbit::before {
+      inset: 10%;
+      border-color: rgba(255,255,255,.06);
+    }
+    .overlay-orbit::after {
+      inset: -10%;
+      border-color: rgba(70,215,255,.08);
+    }
+    .overlay-body-wrap {
+      position: relative;
+      width: min(52vmin, 320px);
+      height: min(52vmin, 320px);
+      display: grid;
+      place-items: center;
+      animation: floatStage 4.8s ease-in-out infinite;
+      z-index: 1;
+    }
+    .overlay-3d {
+      position: absolute;
+      inset: -12%;
+      border-radius: 50%;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity .22s ease;
+    }
+    .overlay-3d canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .overlay-scene.has-three .overlay-3d {
+      opacity: 1;
+    }
+    .overlay-scene.has-three .overlay-beam,
+    .overlay-scene.has-three .overlay-body,
+    .overlay-scene.has-three .overlay-ring {
+      opacity: 0;
+    }
+    .overlay-beam {
+      position: absolute;
+      inset: -14%;
+      border-radius: 50%;
+      background:
+        conic-gradient(from 0deg, transparent 0 10%, rgba(255,255,255,.10) 16%, transparent 22%, rgba(255,177,92,.22) 33%, transparent 44%, rgba(70,215,255,.18) 58%, transparent 72%, rgba(255,255,255,.12) 84%, transparent 100%);
+      filter: blur(10px);
+      animation: beamSweep 12s linear infinite;
+      opacity: .6;
+    }
+    .overlay-body {
+      position: relative;
+      width: 74%;
+      height: 74%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.55), rgba(255,255,255,.08) 24%, transparent 26%),
+        radial-gradient(circle at 34% 34%, rgba(255,255,255,.16), transparent 52%),
+        radial-gradient(circle at 58% 64%, rgba(0,0,0,.34), transparent 62%),
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.28), var(--hero-color) 48%, rgba(8,10,20,.96) 100%);
+      box-shadow:
+        inset -30px -30px 50px rgba(0,0,0,.3),
+        0 0 60px var(--hero-glow),
+        0 0 140px rgba(255,255,255,.06);
+      overflow: visible;
+    }
+    .overlay-body::before {
+      content: "";
+      position: absolute;
+      inset: -10%;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.14);
+      opacity: .55;
+      transform: scale(1.05);
+    }
+    .overlay-body::after {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 24% 26%, rgba(255,255,255,.36), transparent 30%),
+        linear-gradient(135deg, rgba(255,255,255,.16), transparent 54%);
+      mix-blend-mode: screen;
+      opacity: .85;
+    }
+    .overlay-body.sun::before {
+      inset: -16%;
+      border: 12px solid rgba(255,191,68,.14);
+      box-shadow: 0 0 38px rgba(255,191,68,.25);
+    }
+    .overlay-body.sun::after {
+      inset: -18%;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.12), transparent 45%),
+        conic-gradient(from 0deg, rgba(255,173,66,.16), transparent 22%, rgba(255,240,178,.14), transparent 50%, rgba(255,173,66,.16), transparent 75%, rgba(255,240,178,.14));
+      filter: blur(10px);
+      animation: spinOnly 18s linear infinite;
+    }
+    .overlay-ring {
+      position: absolute;
+      width: 102%;
+      height: 36%;
+      border-radius: 50%;
+      border: 7px solid rgba(255,238,195,.54);
+      transform: rotate(-18deg);
+      opacity: 0;
+      box-shadow: 0 0 24px rgba(255,238,195,.18);
+      pointer-events: none;
+    }
+    .overlay-ring.visible { opacity: 1; }
+    .overlay-spark {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 0 18px rgba(255,255,255,.4);
+      animation: shimmer 3.6s ease-in-out infinite;
+      opacity: .55;
+    }
+    .spark-1 { top: 12%; left: 18%; animation-delay: 0s; }
+    .spark-2 { top: 26%; right: 16%; animation-delay: .8s; }
+    .spark-3 { right: 24%; bottom: 18%; animation-delay: 1.6s; }
+    .spark-4 { bottom: 24%; left: 16%; animation-delay: 2.2s; }
+
+    .overlay-copy {
+      background: linear-gradient(180deg, rgba(8, 12, 28, .82), rgba(7, 10, 23, .96));
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 78px 26px 26px;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: 18px;
+    }
+    .overlay-copy-scroll {
+      min-height: 0;
+      overflow: auto;
+      padding-right: 4px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+    .overlay-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,.08);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+    }
+    .overlay-heading h2 {
+      margin: 10px 0 0;
+      font-size: clamp(34px, 4vw, 58px);
+      line-height: .96;
+    }
+    .overlay-meta {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .overlay-story {
+      margin: 0;
+      font-size: clamp(16px, 2vw, 20px);
+      line-height: 1.7;
+      color: #f4f7ff;
+      max-width: 56ch;
+    }
+    .overlay-story-note {
+      margin: -6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .narration-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .narration-btn {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      font-weight: 600;
+    }
+    .narration-status {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .overlay-facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .overlay-fact {
+      padding: 14px 14px 15px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .overlay-fact strong {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .overlay-fact span {
+      display: block;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1080px) {
+      body { overflow: auto; }
+      .app {
+        height: auto;
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(420px, 64vh) auto auto auto;
+        grid-template-areas: "top" "map" "detail" "side" "filters";
+      }
+      .sidebar { max-height: 420px; }
+      .detail-panel { grid-template-columns: 88px 1fr; }
+      .detail-facts { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .overlay-shell {
+        height: min(92vh, 980px);
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(300px, 40vh) minmax(0, 1fr);
+      }
+      .overlay-copy { padding-top: 28px; }
+      .overlay-scene { padding-top: 84px; }
+    }
+    @media (max-width: 640px) {
+      .app { padding: 12px; gap: 12px; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .stat-row { justify-content: flex-start; }
+      .detail-panel { grid-template-columns: 1fr; }
+      .planet-hero { width: 88px; height: 88px; }
+      .detail-facts { grid-template-columns: 1fr; }
+      .filters { padding-bottom: 24px; }
+      .controls { position: static; margin: 12px; }
+      .map-caption { right: 12px; left: 12px; bottom: 12px; max-width: none; }
+      .detail-copy-actions { flex-direction: column; align-items: stretch; }
+      .detail-action { width: 100%; }
+      .overlay { padding: 10px; }
+      .overlay-shell {
+        height: calc(100vh - 20px);
+        padding: 14px;
+        gap: 12px;
+        border-radius: 24px;
+      }
+      .overlay-topbar {
+        top: 14px;
+        left: 14px;
+        right: 14px;
+      }
+      .overlay-topbar-left,
+      .overlay-topbar-right { gap: 8px; }
+      .overlay-btn { padding: 10px 12px; }
+      .overlay-icon-btn { width: 42px; height: 42px; }
+      .overlay-scene { padding: 76px 14px 18px; }
+      .overlay-copy { padding: 18px 14px 14px; }
+      .overlay-heading h2 { font-size: clamp(28px, 9vw, 42px); }
+      .overlay-facts { grid-template-columns: 1fr; }
+      .narration-controls { display: grid; grid-template-columns: 1fr 1fr; }
+      .narration-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <div class="app">
+    <section class="topbar glass">
+      <div class="title-wrap">
+        <div class="eyebrow" id="eyebrowText">Interactive Space Atlas · 双语宇宙地图</div>
+        <h1 id="titleText">Universe of Planets 宇宙行星图</h1>
+        <div class="subtitle" id="subtitleText">A cinematic constellation map for young kids, curious adults, and anyone who wants to wander from the Sun to TRAPPIST-1e without leaving the couch. 给孩子和宇宙爱好者的互动星球探索图。</div>
+      </div>
+      <div class="stat-row">
+        <div class="pill"><strong id="worldCount">18</strong><span id="worldLabel">worlds 世界</span></div>
+        <div class="pill"><strong id="systemCount">8</strong><span id="systemLabel">systems 星系</span></div>
+        <div class="pill"><strong id="modeLabel">Kids</strong><span id="modeSuffix"> mode</span></div>
+      </div>
+    </section>
+
+    <section class="map-panel glass">
+      <div class="controls">
+        <div class="mode-toggle">
+          <button class="mode-btn active" data-mode="kids">🌈 Kids 儿童</button>
+          <button class="mode-btn" data-mode="astro">🔭 Astro 天文</button>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="both">双语</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
+        <div class="music-toggle">
+          <button class="music-btn" id="musicBtn">🎵 Atmosphere BGM</button>
+        </div>
+      </div>
+      <div class="map-stage">
+        <div class="orbit-grid"></div>
+        <div class="map-vignette"></div>
+        <svg id="universe" viewBox="0 0 1000 680" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="map-caption glass">
+        <strong id="captionTitle">Tap a world to begin · 点一个星球开始</strong>
+        <p id="captionText">Each glowing world hides two stories, one simple enough for a child, one rich enough for the astrophysics crowd. 每个发光星球都藏着儿童版和天文版两种讲法。</p>
+      </div>
+    </section>
+
+    <aside class="sidebar glass">
+      <div class="side-head">
+        <div>
+          <h2 id="finderTitle">World Finder 星球导航</h2>
+          <p id="finderText">Filter by planet type, warmth, habitability, or star system. Click any card to focus the universe map. 按类型、温度、宜居度或星系筛选。</p>
+        </div>
+      </div>
+      <input class="search" id="searchInput" placeholder="Search 搜索 planet, moon, exoplanet, star" />
+      <div class="world-list" id="worldList"></div>
+    </aside>
+
+    <section class="detail-panel glass">
+      <div class="planet-hero" id="planetHero"></div>
+      <div class="detail-copy">
+        <h2 id="detailName">Sun 太阳</h2>
+        <div class="meta" id="detailMeta">Star · Solar System · Very hot</div>
+        <p id="detailStory"></p>
+        <div class="detail-copy-actions">
+          <button class="detail-action primary" id="openImmersiveBtn">Open immersive story 打开沉浸故事</button>
+          <button class="detail-action" id="quickNarrateBtn">Narrate now 立即朗读</button>
+        </div>
+      </div>
+      <div class="detail-facts" id="detailFacts"></div>
+    </section>
+
+    <section class="filters glass">
+      <div class="filter-group" id="typeFilters"><label>Type 类型</label></div>
+      <div class="filter-group" id="tempFilters"><label>Temperature 温度</label></div>
+      <div class="filter-group" id="habitFilters"><label>Habitability 宜居度</label></div>
+      <div class="filter-group" id="systemFilters"><label>System 星系</label></div>
+    </section>
+  </div>
+
+  <section class="overlay" id="detailOverlay" aria-hidden="true">
+    <div class="overlay-backdrop" id="overlayBackdrop"></div>
+    <div class="overlay-shell glass" id="overlayShell">
+      <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+          <button class="overlay-btn" id="overlayBackBtn">← Back to map 返回地图</button>
+          <div class="overlay-kicker" id="overlayKicker">Immersive story · 沉浸故事</div>
+        </div>
+        <div class="overlay-topbar-right">
+          <button class="overlay-btn primary" id="overlayReplayTopBtn">Replay narration 重播</button>
+          <button class="overlay-icon-btn" id="overlayCloseBtn" aria-label="Close overlay">✕</button>
+        </div>
+      </div>
+
+      <div class="overlay-scene" id="overlayScene">
+        <div class="overlay-scene-bg"></div>
+        <div class="overlay-orbit"></div>
+        <div class="overlay-body-wrap">
+          <div class="overlay-3d" id="overlayThreeStage" aria-hidden="true"></div>
+          <div class="overlay-beam"></div>
+          <div class="overlay-ring" id="overlayRing"></div>
+          <div class="overlay-body" id="overlayBody"></div>
+          <span class="overlay-spark spark-1"></span>
+          <span class="overlay-spark spark-2"></span>
+          <span class="overlay-spark spark-3"></span>
+          <span class="overlay-spark spark-4"></span>
+        </div>
+      </div>
+
+      <div class="overlay-copy">
+        <div class="overlay-copy-scroll">
+          <div class="overlay-heading">
+            <div class="overlay-kicker" id="overlayModeBadge">Kids mode · 儿童模式</div>
+            <h2 id="overlayName">Sun 太阳</h2>
+            <div class="overlay-meta" id="overlayMeta">Star · Solar System · Extreme · Life-giving</div>
+          </div>
+
+          <p class="overlay-story" id="overlayStory"></p>
+          <p class="overlay-story-note" id="overlayStoryNote">Narration starts automatically when this screen opens. 打开后会自动开始朗读。</p>
+
+          <div class="narration-controls">
+            <button class="narration-btn active" id="overlayReplayBtn">Replay narration 重播</button>
+            <button class="narration-btn" id="overlayPauseBtn">Pause narration 暂停</button>
+          </div>
+          <div class="narration-status" id="narrationStatus">Narration ready. 朗读准备就绪。</div>
+
+          <div class="overlay-facts" id="overlayFacts"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <audio id="bgm" loop preload="none" src="https://cdn.pixabay.com/download/audio/2023/05/16/audio_5f2c86e0af.mp3?filename=space-ambient-146102.mp3"></audio>
+
+  <script src="https://unpkg.com/three@0.165.0/build/three.min.js"></script>
+  <script>
+    const worlds = [
+      {
+        id:'sun',
+        name:'Sun',
+        zh:'太阳',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Star',
+        typeZh:'恒星',
+        temp:'Extreme',
+        tempZh:'极端',
+        habitability:'Life-giving',
+        habitabilityZh:'孕育生命',
+        x:118,
+        y:170,
+        size:34,
+        color:'#ffb85c',
+        glow:'rgba(255,186,92,.68)',
+        ring:false,
+        special:'sun',
+        blurbKids:'The Sun is our neighborhood star and the glowing heart of the Solar System. It sends light and warmth to every planet, powers Earth’s weather, and makes life possible here.',
+        blurbKidsZh:'太阳是我们附近的恒星，也是太阳系发光的心脏。它把光和热送到每一颗行星上，为地球天气提供能量，也让生命成为可能。',
+        blurbAstro:'The Sun is a middle-aged G-type star powered by nuclear fusion in its core. Its gravity organizes the Solar System, and its radiation, magnetic fields, and solar wind shape every surrounding world.',
+        blurbAstroZh:'太阳是一颗中年G型恒星，核心靠核聚变释放能量。它的引力维系整个太阳系，它的辐射、磁场和太阳风会塑造周围每一个世界。',
+        factsKids:{
+          'What it is':'A giant glowing star',
+          'Main job':'Light and warmth for the Solar System',
+          'Fun fact':'More than one million Earths could fit inside'
+        },
+        factsKidsZh:{
+          '它是什么':'一颗巨大又发光的恒星',
+          '主要工作':'给太阳系提供光和热',
+          '冷知识':'里面大约能装下一百多万个地球'
+        },
+        factsAstro:{
+          'Core power':'Hydrogen fusion into helium',
+          'Surface temp':'About 5,500°C',
+          'Age':'About 4.6 billion years'
+        },
+        factsAstroZh:{
+          '核心能量':'氢聚变成氦',
+          '表面温度':'约 5,500°C',
+          '年龄':'约 46 亿年'
+        }
+      },
+      {
+        id:'mercury',
+        name:'Mercury',
+        zh:'水星',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Rocky',
+        typeZh:'岩石行星',
+        temp:'Extreme',
+        tempZh:'极端',
+        habitability:'Harsh',
+        habitabilityZh:'不宜居',
+        x:170,
+        y:302,
+        size:12,
+        color:'#c6c0b4',
+        glow:'rgba(220,210,190,.45)',
+        ring:false,
+        blurbKids:'Mercury is the speedy little planet closest to the Sun. One side gets roasting hot, the other side turns super cold.',
+        blurbKidsZh:'水星是离太阳最近的小快星，一面非常热，另一面又特别冷。',
+        blurbAstro:'Mercury is a dense rocky world with a giant iron core, almost no atmosphere, and one of the wildest day-night temperature swings in the Solar System.',
+        blurbAstroZh:'水星是一颗高密度岩石行星，拥有巨大的铁核，几乎没有大气层，昼夜温差非常夸张。',
+        factsKids:{
+          'Best known for':'Zooming around the Sun',
+          'Feels like':'A giant scorched rock',
+          'Fun fact':'A year is only 88 Earth days'
+        },
+        factsKidsZh:{
+          '最有名':'绕太阳飞得超快',
+          '感觉像':'被烤焦的大石头',
+          '冷知识':'一年只有88个地球日'
+        },
+        factsAstro:{
+          'Radius':'2,439 km',
+          'Orbit':'88 Earth days',
+          'Surface temp':'-180°C to 430°C'
+        },
+        factsAstroZh:{
+          '半径':'2,439 公里',
+          '公转周期':'88 个地球日',
+          '表面温度':'-180°C 到 430°C'
+        }
+      },
+      {
+        id:'venus',
+        name:'Venus',
+        zh:'金星',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Rocky',
+        typeZh:'岩石行星',
+        temp:'Hot',
+        tempZh:'炎热',
+        habitability:'Harsh',
+        habitabilityZh:'不宜居',
+        x:230,
+        y:250,
+        size:16,
+        color:'#f0b16b',
+        glow:'rgba(255,177,92,.50)',
+        ring:false,
+        blurbKids:'Venus shines brightly in the sky, but it is wrapped in thick clouds and is hotter than an oven left on forever.',
+        blurbKidsZh:'金星在天空里很亮，但它被厚厚云层包住，热得像永远开着的烤箱。',
+        blurbAstro:'Venus has a runaway greenhouse atmosphere made mostly of carbon dioxide. Its surface pressure and heat make it the hottest planet in the Solar System.',
+        blurbAstroZh:'金星的大气层以二氧化碳为主，温室效应失控，所以它成为太阳系最热的行星。',
+        factsKids:{
+          'Nickname':'Earth’s fiery twin',
+          'Sky look':'Creamy yellow clouds',
+          'Fun fact':'A Venus day is longer than its year'
+        },
+        factsKidsZh:{
+          '昵称':'地球的火热双胞胎',
+          '天空样子':'奶油黄厚云层',
+          '冷知识':'一天比一年还长'
+        },
+        factsAstro:{
+          'Atmosphere':'96% CO₂',
+          'Surface temp':'465°C',
+          'Rotation':'243 Earth days, retrograde'
+        },
+        factsAstroZh:{
+          '大气层':'96% 二氧化碳',
+          '表面温度':'465°C',
+          '自转':'243 个地球日，逆向自转'
+        }
+      },
+      {
+        id:'earth',
+        name:'Earth',
+        zh:'地球',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Rocky',
+        typeZh:'岩石行星',
+        temp:'Mild',
+        tempZh:'温和',
+        habitability:'Friendly',
+        habitabilityZh:'宜居',
+        x:318,
+        y:228,
+        size:18,
+        color:'#49d7ff',
+        glow:'rgba(73,215,255,.55)',
+        ring:false,
+        blurbKids:'Earth is our home, full of oceans, weather, forests, deserts, and a thousand kinds of life.',
+        blurbKidsZh:'地球是我们的家，有海洋、天气、森林、沙漠，还有很多很多生命。',
+        blurbAstro:'Earth sits in the Sun’s habitable zone with liquid water, plate tectonics, and a protective atmosphere, a rare combination for complex life.',
+        blurbAstroZh:'地球位于太阳宜居带，拥有液态水、板块运动和保护性大气层，这种组合对复杂生命非常罕见。',
+        factsKids:{
+          'Home to':'You, whales, trees, and pizza',
+          'Blue because':'So much water',
+          'Moon count':'1'
+        },
+        factsKidsZh:{
+          '住着谁':'你、鲸鱼、树和披萨',
+          '为什么蓝':'因为水很多',
+          '卫星数量':'1'
+        },
+        factsAstro:{
+          'Radius':'6,371 km',
+          'Atmosphere':'Nitrogen and oxygen',
+          'Age':'4.54 billion years'
+        },
+        factsAstroZh:{
+          '半径':'6,371 公里',
+          '大气层':'氮气和氧气',
+          '年龄':'45.4 亿年'
+        }
+      },
+      {
+        id:'moon',
+        name:'Moon',
+        zh:'月球',
+        system:'Earth-Moon',
+        systemZh:'地月系统',
+        type:'Moon',
+        typeZh:'卫星',
+        temp:'Extreme',
+        tempZh:'极端',
+        habitability:'Harsh',
+        habitabilityZh:'不宜居',
+        x:388,
+        y:178,
+        size:10,
+        color:'#d9e3ef',
+        glow:'rgba(220,230,240,.45)',
+        ring:false,
+        blurbKids:'The Moon is Earth’s bright sidekick. It helps make tides and lights up the night sky.',
+        blurbKidsZh:'月球是地球明亮的小伙伴，它帮助形成潮汐，也照亮夜空。',
+        blurbAstro:'Earth’s Moon stabilizes our planet’s axial tilt, drives tides, and preserves a record of ancient impacts on its airless surface.',
+        blurbAstroZh:'月球能稳定地球自转轴，制造潮汐，也在无空气表面保留了远古撞击记录。',
+        factsKids:{
+          'Role':'Earth’s space buddy',
+          'Looks like':'A dusty gray ball',
+          'Fun fact':'Moon footprints can last a very long time'
+        },
+        factsKidsZh:{
+          '角色':'地球的太空伙伴',
+          '看起来像':'灰色尘土球',
+          '冷知识':'脚印能留很久很久'
+        },
+        factsAstro:{
+          'Distance':'384,400 km',
+          'Gravity':'About 1/6 of Earth',
+          'Surface':'Dusty regolith and impact basins'
+        },
+        factsAstroZh:{
+          '距离':'384,400 公里',
+          '重力':'约为地球的 1/6',
+          '表面':'尘土层与撞击盆地'
+        }
+      },
+      {
+        id:'mars',
+        name:'Mars',
+        zh:'火星',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Rocky',
+        typeZh:'岩石行星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Maybe',
+        habitabilityZh:'也许',
+        x:448,
+        y:274,
+        size:14,
+        color:'#f06c4e',
+        glow:'rgba(240,108,78,.46)',
+        ring:false,
+        blurbKids:'Mars is the red dusty world with giant volcanoes and robots exploring its surface right now.',
+        blurbKidsZh:'火星是一颗红色多尘的世界，上面有巨型火山，还有机器人正在探索它。',
+        blurbAstro:'Mars preserves evidence of ancient rivers, lakes, and a wetter past, making it one of the best places to study whether life once existed beyond Earth.',
+        blurbAstroZh:'火星保留了古代河流和湖泊的证据，是研究地外生命是否曾出现过的重点目标。',
+        factsKids:{
+          'Color':'Rusty red',
+          'Robots there':'Yes, several',
+          'Dream':'Maybe future humans visit'
+        },
+        factsKidsZh:{
+          '颜色':'铁锈红',
+          '有没有机器人':'有，而且不止一个',
+          '梦想':'未来人类也许会去'
+        },
+        factsAstro:{
+          'Largest volcano':'Olympus Mons',
+          'Day length':'24.6 hours',
+          'Past water':'Strong evidence'
+        },
+        factsAstroZh:{
+          '最大火山':'奥林帕斯山',
+          '一天长度':'24.6 小时',
+          '古代水迹':'证据很强'
+        }
+      },
+      {
+        id:'jupiter',
+        name:'Jupiter',
+        zh:'木星',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Gas Giant',
+        typeZh:'气态巨行星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Harsh',
+        habitabilityZh:'不宜居',
+        x:548,
+        y:166,
+        size:28,
+        color:'#deb074',
+        glow:'rgba(222,176,116,.48)',
+        ring:false,
+        blurbKids:'Jupiter is the giant boss planet with wild stripes and a storm so huge it could swallow Earth.',
+        blurbKidsZh:'木星是巨无霸行星，有漂亮条纹，还有一个大到能吞下地球的超级风暴。',
+        blurbAstro:'Jupiter’s immense gravity shapes the Solar System, shelters and redirects smaller bodies, and hosts a powerful magnetosphere plus a family of remarkable moons.',
+        blurbAstroZh:'木星强大的引力深刻影响太阳系，还拥有强磁层和一群非常特别的卫星。',
+        factsKids:{
+          'Superpower':'Biggest planet',
+          'Storm':'Great Red Spot',
+          'Moon count':'A lot'
+        },
+        factsKidsZh:{
+          '超能力':'最大行星',
+          '风暴':'大红斑',
+          '卫星数量':'很多很多'
+        },
+        factsAstro:{
+          'Mass':'318 Earths',
+          'Composition':'Hydrogen and helium',
+          'Magnetic field':'Extremely strong'
+        },
+        factsAstroZh:{
+          '质量':'318 个地球',
+          '组成':'氢和氦',
+          '磁场':'非常强'
+        }
+      },
+      {
+        id:'europa',
+        name:'Europa',
+        zh:'欧罗巴',
+        system:'Jupiter System',
+        systemZh:'木星系统',
+        type:'Moon',
+        typeZh:'卫星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Maybe',
+        habitabilityZh:'也许',
+        x:642,
+        y:114,
+        size:10,
+        color:'#b7d3ff',
+        glow:'rgba(183,211,255,.42)',
+        ring:false,
+        blurbKids:'Europa is a moon with a frozen shell. Under that icy crust, scientists think a salty ocean may be hiding.',
+        blurbKidsZh:'欧罗巴表面是冰壳，冰层下面，科学家猜可能藏着一整个咸水海洋。',
+        blurbAstro:'Europa is a prime astrobiology target because tidal heating may maintain a global subsurface ocean in contact with a rocky seafloor.',
+        blurbAstroZh:'欧罗巴是天体生物学的重要目标，因为潮汐加热可能让地下海洋长期存在。',
+        factsKids:{
+          'Outside':'Cracked ice',
+          'Inside':'Maybe a hidden ocean',
+          'Cool factor':'One of the best alien-ocean worlds'
+        },
+        factsKidsZh:{
+          '外面':'裂开的冰层',
+          '里面呢':'也许藏着海洋',
+          '酷点':'最像外星海洋世界之一'
+        },
+        factsAstro:{
+          'Surface':'Water ice',
+          'Ocean':'Likely global subsurface',
+          'Heat source':'Tidal flexing'
+        },
+        factsAstroZh:{
+          '表面':'水冰',
+          '海洋':'可能是全球地下海洋',
+          '热源':'潮汐拉扯'
+        }
+      },
+      {
+        id:'ganymede',
+        name:'Ganymede',
+        zh:'盖尼米得',
+        system:'Jupiter System',
+        systemZh:'木星系统',
+        type:'Moon',
+        typeZh:'卫星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Maybe',
+        habitabilityZh:'也许',
+        x:694,
+        y:214,
+        size:13,
+        color:'#88a2d1',
+        glow:'rgba(136,162,209,.42)',
+        ring:false,
+        blurbKids:'Ganymede is the biggest moon in the whole Solar System. It is even larger than Mercury.',
+        blurbKidsZh:'盖尼米得是整个太阳系最大的卫星，甚至比水星还大。',
+        blurbAstro:'Ganymede is the largest moon in the Solar System and the only moon known to generate its own magnetic field.',
+        blurbAstroZh:'盖尼米得是太阳系最大卫星，也是目前已知唯一拥有自身磁场的卫星。',
+        factsKids:{
+          'Claim to fame':'Biggest moon',
+          'Bigger than':'Mercury',
+          'Special trick':'Has its own magnetic field'
+        },
+        factsKidsZh:{
+          '最厉害':'最大卫星',
+          '比谁还大':'比水星还大',
+          '特殊本领':'有自己的磁场'
+        },
+        factsAstro:{
+          'Radius':'2,634 km',
+          'Magnetic field':'Intrinsic',
+          'Interior':'Layered ice, ocean, rock, metal'
+        },
+        factsAstroZh:{
+          '半径':'2,634 公里',
+          '磁场':'自身生成',
+          '内部':'冰层、海洋、岩石、金属分层'
+        }
+      },
+      {
+        id:'saturn',
+        name:'Saturn',
+        zh:'土星',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Gas Giant',
+        typeZh:'气态巨行星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Harsh',
+        habitabilityZh:'不宜居',
+        x:698,
+        y:318,
+        size:25,
+        color:'#f4d9a0',
+        glow:'rgba(244,217,160,.5)',
+        ring:true,
+        blurbKids:'Saturn is famous for its glittering rings. If a giant bathtub existed in space, Saturn might almost float in it.',
+        blurbKidsZh:'土星最有名的是闪闪发光的光环，如果宇宙里有超大浴缸，土星几乎能浮起来。',
+        blurbAstro:'Saturn’s ring system is a dynamic laboratory of icy particles, shepherd moons, and orbital resonances, all wrapped around a low-density gas giant.',
+        blurbAstroZh:'土星环是研究冰粒、牧羊卫星和轨道共振的天然实验室。',
+        factsKids:{
+          'Most famous feature':'Huge rings',
+          'Looks like':'A cosmic jewel',
+          'Wild fact':'Less dense than water'
+        },
+        factsKidsZh:{
+          '最有名':'巨大光环',
+          '看起来像':'宇宙宝石',
+          '神奇事实':'密度比水还小'
+        },
+        factsAstro:{
+          'Density':'0.687 g/cm³',
+          'Ring makeup':'Mostly water ice',
+          'Wind speed':'Up to 1,800 km/h'
+        },
+        factsAstroZh:{
+          '密度':'0.687 g/cm³',
+          '光环成分':'大多是水冰',
+          '风速':'可达 1,800 km/h'
+        }
+      },
+      {
+        id:'titan',
+        name:'Titan',
+        zh:'泰坦',
+        system:'Saturn System',
+        systemZh:'土星系统',
+        type:'Moon',
+        typeZh:'卫星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Maybe',
+        habitabilityZh:'也许',
+        x:790,
+        y:252,
+        size:13,
+        color:'#d5a85c',
+        glow:'rgba(213,168,92,.45)',
+        ring:false,
+        blurbKids:'Titan has thick orange skies and lakes, but not water lakes, they are made of liquid methane and ethane.',
+        blurbKidsZh:'泰坦有厚厚的橙色天空和湖泊，不过那些湖不是水，而是液态甲烷和乙烷。',
+        blurbAstro:'Titan is uniquely Earth-like in process, with rivers, lakes, rain, dunes, and weather, but built from hydrocarbons in a frigid environment.',
+        blurbAstroZh:'泰坦在过程上很像地球，有河流、湖泊、降雨和天气系统，只不过主角是碳氢化合物。',
+        factsKids:{
+          'Sky color':'Orange and hazy',
+          'Lakes made of':'Liquid methane',
+          'Adventure score':'Very weird, very cool'
+        },
+        factsKidsZh:{
+          '天空颜色':'橙色迷雾',
+          '湖泊成分':'液态甲烷',
+          '冒险指数':'又怪又酷'
+        },
+        factsAstro:{
+          'Atmosphere':'Dense nitrogen-rich',
+          'Liquids':'Methane and ethane',
+          'Surface temp':'-179°C'
+        },
+        factsAstroZh:{
+          '大气层':'浓厚富氮',
+          '液体':'甲烷和乙烷',
+          '表面温度':'-179°C'
+        }
+      },
+      {
+        id:'uranus',
+        name:'Uranus',
+        zh:'天王星',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Ice Giant',
+        typeZh:'冰巨行星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Harsh',
+        habitabilityZh:'不宜居',
+        x:804,
+        y:428,
+        size:20,
+        color:'#8af0ef',
+        glow:'rgba(138,240,239,.48)',
+        ring:false,
+        blurbKids:'Uranus is a pale blue giant that spins tipped way over, like it is rolling around the Sun on its side.',
+        blurbKidsZh:'天王星是一颗浅蓝色巨行星，它几乎是侧着滚着绕太阳转。',
+        blurbAstro:'Uranus is an ice giant with an extreme axial tilt of about 98 degrees, likely caused by an ancient giant impact.',
+        blurbAstroZh:'天王星是一颗冰巨行星，自转轴倾斜约98度，可能是远古大撞击造成的。',
+        factsKids:{
+          'Coolest trick':'Rolls on its side',
+          'Color':'Blue-green',
+          'Type':'Ice giant'
+        },
+        factsKidsZh:{
+          '最酷本领':'侧着转',
+          '颜色':'蓝绿色',
+          '类型':'冰巨行星'
+        },
+        factsAstro:{
+          'Tilt':'98°',
+          'Composition':'Ices, hydrogen, helium',
+          'Temperature':'Among the coldest atmospheres'
+        },
+        factsAstroZh:{
+          '倾角':'98°',
+          '组成':'冰、氢、氦',
+          '温度':'大气层极冷'
+        }
+      },
+      {
+        id:'neptune',
+        name:'Neptune',
+        zh:'海王星',
+        system:'Solar System',
+        systemZh:'太阳系',
+        type:'Ice Giant',
+        typeZh:'冰巨行星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Harsh',
+        habitabilityZh:'不宜居',
+        x:904,
+        y:356,
+        size:20,
+        color:'#4a84ff',
+        glow:'rgba(74,132,255,.52)',
+        ring:false,
+        blurbKids:'Neptune is the deep blue windy giant at the edge of the Solar System, where sunlight is faint and chilly.',
+        blurbKidsZh:'海王星在太阳系边缘，深蓝又多风，阳光到了那里已经很弱很冷。',
+        blurbAstro:'Neptune radiates internal heat and drives powerful supersonic winds despite its distance from the Sun.',
+        blurbAstroZh:'虽然离太阳很远，海王星仍会释放内部热量，并产生超强风暴。',
+        factsKids:{
+          'Known for':'Wild winds',
+          'Color':'Ocean blue',
+          'Far away':'Very'
+        },
+        factsKidsZh:{
+          '有名点':'超级大风',
+          '颜色':'海洋蓝',
+          '远不远':'非常远'
+        },
+        factsAstro:{
+          'Orbit':'165 Earth years',
+          'Wind speed':'Up to 2,100 km/h',
+          'Internal heat':'Strong'
+        },
+        factsAstroZh:{
+          '公转周期':'165 个地球年',
+          '风速':'可达 2,100 km/h',
+          '内部热量':'很强'
+        }
+      },
+      {
+        id:'pluto',
+        name:'Pluto',
+        zh:'冥王星',
+        system:'Kuiper Belt',
+        systemZh:'柯伊伯带',
+        type:'Dwarf Planet',
+        typeZh:'矮行星',
+        temp:'Cold',
+        tempZh:'寒冷',
+        habitability:'Harsh',
+        habitabilityZh:'不宜居',
+        x:940,
+        y:508,
+        size:9,
+        color:'#d4c1aa',
+        glow:'rgba(212,193,170,.4)',
+        ring:false,
+        blurbKids:'Pluto may be small, but it has mountains, ice plains, and a giant heart-shaped region that made everyone fall in love with it again.',
+        blurbKidsZh:'冥王星虽然小，却有山脉、冰原，还有一个超有名的心形区域。',
+        blurbAstro:'Pluto is a geologically interesting dwarf planet in the Kuiper Belt with nitrogen ice plains, water-ice mountains, and a surprisingly active past.',
+        blurbAstroZh:'冥王星是柯伊伯带中非常有地质活力的矮行星，拥有氮冰平原和水冰山脉。',
+        factsKids:{
+          'Famous shape':'Big icy heart',
+          'Category':'Dwarf planet',
+          'Lesson':'Small worlds can still be amazing'
+        },
+        factsKidsZh:{
+          '著名形状':'大冰心',
+          '分类':'矮行星',
+          '启发':'小世界也能很精彩'
+        },
+        factsAstro:{
+          'Region':'Kuiper Belt',
+          'Surface':'Nitrogen, methane, water ice',
+          'Companion':'Charon is huge relative to Pluto'
+        },
+        factsAstroZh:{
+          '所在区域':'柯伊伯带',
+          '表面':'氮、甲烷、水冰',
+          '伙伴':'卡戎相对它来说很大'
+        }
+      },
+      {
+        id:'proxima-b',
+        name:'Proxima b',
+        zh:'比邻星 b',
+        system:'Proxima Centauri',
+        systemZh:'比邻星系统',
+        type:'Exoplanet',
+        typeZh:'系外行星',
+        temp:'Mild',
+        tempZh:'温和',
+        habitability:'Maybe',
+        habitabilityZh:'也许',
+        x:222,
+        y:520,
+        size:12,
+        color:'#7ef0b5',
+        glow:'rgba(126,240,181,.46)',
+        ring:false,
+        blurbKids:'Proxima b is one of the closest exoplanets we know. It circles a tiny red star not so far away, at least by space standards.',
+        blurbKidsZh:'比邻星 b 是离我们最近的系外行星之一，它绕着一颗小小红矮星旋转。',
+        blurbAstro:'Proxima b orbits within the habitable zone of the nearest star to the Sun, but stellar flares may challenge atmospheric survival and surface life.',
+        blurbAstroZh:'比邻星 b 位于最近恒星的宜居带中，但恒星耀斑可能会影响它的大气层和生命条件。',
+        factsKids:{
+          'Why exciting':'Close exoplanet',
+          'Star type':'Red dwarf',
+          'Could life exist':'Maybe, scientists are still debating'
+        },
+        factsKidsZh:{
+          '为什么激动':'很近的系外行星',
+          '恒星类型':'红矮星',
+          '会不会有生命':'也许，科学家还在讨论'
+        },
+        factsAstro:{
+          'Distance':'4.24 light-years',
+          'Host star':'Proxima Centauri',
+          'Major question':'Atmosphere under flare activity'
+        },
+        factsAstroZh:{
+          '距离':'4.24 光年',
+          '主恒星':'比邻星',
+          '关键问题':'耀斑下的大气层是否能保住'
+        }
+      },
+      {
+        id:'trappist-1e',
+        name:'TRAPPIST-1e',
+        zh:'TRAPPIST-1e',
+        system:'TRAPPIST-1',
+        systemZh:'TRAPPIST-1 系统',
+        type:'Exoplanet',
+        typeZh:'系外行星',
+        temp:'Mild',
+        tempZh:'温和',
+        habitability:'Promising',
+        habitabilityZh:'有希望',
+        x:340,
+        y:560,
+        size:11,
+        color:'#6af4dd',
+        glow:'rgba(106,244,221,.48)',
+        ring:false,
+        blurbKids:'TRAPPIST-1e is part of a whole family of worlds orbiting one tiny star, like a bunch of marbles racing in close circles.',
+        blurbKidsZh:'TRAPPIST-1e 属于一个挤在一起绕同一颗小恒星转的大家庭，就像很多弹珠一起跑圈。',
+        blurbAstro:'TRAPPIST-1e is one of the most compelling rocky habitable-zone exoplanets because it is Earth-sized and belongs to a compact multi-planet system ideal for atmospheric study.',
+        blurbAstroZh:'TRAPPIST-1e 是非常值得关注的岩石系外行星，因为它接近地球大小，又在紧凑多行星系统里。',
+        factsKids:{
+          'System style':'Seven-planet family',
+          'Planet vibe':'Rocky and exciting',
+          'Why famous':'Great target for telescope study'
+        },
+        factsKidsZh:{
+          '系统风格':'七颗行星大家庭',
+          '星球感觉':'岩石感、很精彩',
+          '为什么有名':'望远镜研究热门目标'
+        },
+        factsAstro:{
+          'Distance':'39 light-years',
+          'Size':'Near Earth-sized',
+          'Priority':'Atmospheric characterization target'
+        },
+        factsAstroZh:{
+          '距离':'39 光年',
+          '大小':'接近地球',
+          '优先级':'大气层研究重点目标'
+        }
+      },
+      {
+        id:'kepler-452b',
+        name:'Kepler-452b',
+        zh:'开普勒-452b',
+        system:'Kepler-452',
+        systemZh:'开普勒-452 系统',
+        type:'Exoplanet',
+        typeZh:'系外行星',
+        temp:'Mild',
+        tempZh:'温和',
+        habitability:'Promising',
+        habitabilityZh:'有希望',
+        x:512,
+        y:566,
+        size:13,
+        color:'#9be67c',
+        glow:'rgba(155,230,124,.44)',
+        ring:false,
+        blurbKids:'Kepler-452b is sometimes called a cousin of Earth because it orbits in a comfortable zone around its star.',
+        blurbKidsZh:'开普勒-452b 有时被叫做“地球表亲”，因为它绕着恒星运行的位置比较舒服。',
+        blurbAstro:'Kepler-452b is a super-Earth candidate in the habitable zone of a Sun-like star, though its true surface conditions remain uncertain.',
+        blurbAstroZh:'开普勒-452b 是位于类太阳恒星宜居带中的超级地球候选者，但真实表面情况还不清楚。',
+        factsKids:{
+          'Nickname':'Earth cousin',
+          'Star':'Sun-like',
+          'Big question':'What is its surface really like'
+        },
+        factsKidsZh:{
+          '昵称':'地球表亲',
+          '恒星':'像太阳',
+          '最大问题':'它表面到底什么样'
+        },
+        factsAstro:{
+          'Distance':'1,400 light-years',
+          'Status':'Habitable-zone candidate',
+          'Uncertainty':'Mass and atmosphere not directly known'
+        },
+        factsAstroZh:{
+          '距离':'1,400 光年',
+          '状态':'宜居带候选者',
+          '不确定点':'质量和大气层未直接测到'
+        }
+      },
+      {
+        id:'wasp-12b',
+        name:'WASP-12b',
+        zh:'WASP-12b',
+        system:'WASP-12',
+        systemZh:'WASP-12 系统',
+        type:'Exoplanet',
+        typeZh:'系外行星',
+        temp:'Extreme',
+        tempZh:'极端',
+        habitability:'Impossible',
+        habitabilityZh:'不可能',
+        x:690,
+        y:565,
+        size:16,
+        color:'#ff7c5f',
+        glow:'rgba(255,124,95,.52)',
+        ring:false,
+        blurbKids:'WASP-12b is a blazing hot giant so close to its star that it is getting stretched and cooked.',
+        blurbKidsZh:'WASP-12b 是一颗离恒星太近的超热巨行星，热到像正在被拉长和烤熟。',
+        blurbAstro:'WASP-12b is an ultra-hot Jupiter undergoing strong tidal distortion and atmospheric escape due to intense stellar irradiation.',
+        blurbAstroZh:'WASP-12b 是一颗超热木星，正因强烈恒星辐射而发生潮汐形变和大气逃逸。',
+        factsKids:{
+          'Planet mood':'Way too hot',
+          'Type':'Hot giant',
+          'Fun fact':'Its shape is being pulled out of round'
+        },
+        factsKidsZh:{
+          '行星状态':'热得离谱',
+          '类型':'超热巨行星',
+          '冷知识':'形状正被拉扯变形'
+        },
+        factsAstro:{
+          'Class':'Ultra-hot Jupiter',
+          'Orbit':'About 1 Earth day',
+          'Atmosphere':'Escaping under extreme heating'
+        },
+        factsAstroZh:{
+          '类别':'超热木星',
+          '公转':'约 1 个地球日',
+          '大气层':'在极热下不断逃逸'
+        }
+      },
+      {
+        id:'hd-189733b',
+        name:'HD 189733 b',
+        zh:'HD 189733 b',
+        system:'HD 189733',
+        systemZh:'HD 189733 系统',
+        type:'Exoplanet',
+        typeZh:'系外行星',
+        temp:'Hot',
+        tempZh:'炎热',
+        habitability:'Impossible',
+        habitabilityZh:'不可能',
+        x:836,
+        y:564,
+        size:14,
+        color:'#4fc9ff',
+        glow:'rgba(79,201,255,.48)',
+        ring:false,
+        blurbKids:'This planet may look beautiful blue, but do not visit. Scientists think it may have glass rain blown sideways by crazy winds.',
+        blurbKidsZh:'这颗星球看起来蓝得很漂亮，但千万别去，科学家猜它可能会下“玻璃雨”。',
+        blurbAstro:'HD 189733 b is a well-studied hot Jupiter whose atmosphere shows strong winds, haze, and dramatic weather signatures.',
+        blurbAstroZh:'HD 189733 b 是被研究得很多的热木星，大气层里有强风、雾霾和戏剧化天气。',
+        factsKids:{
+          'Looks':'Beautiful blue',
+          'Reality':'Terrifying weather',
+          'Why famous':'Possible glass rain'
+        },
+        factsKidsZh:{
+          '外表':'漂亮蓝色',
+          '现实':'天气可怕',
+          '为什么有名':'可能会下玻璃雨'
+        },
+        factsAstro:{
+          'Class':'Hot Jupiter',
+          'Weather':'Extreme winds and silicate particles',
+          'Value':'Benchmark exoplanet atmosphere target'
+        },
+        factsAstroZh:{
+          '类别':'热木星',
+          '天气':'极强风和硅酸盐颗粒',
+          '价值':'大气层研究标杆目标'
+        }
+      }
+    ];
+
+    const links = [
+      ['sun','mercury'],
+      ['sun','venus'],
+      ['sun','earth'],
+      ['mercury','venus'],
+      ['venus','earth'],
+      ['earth','moon'],
+      ['earth','mars'],
+      ['mars','jupiter'],
+      ['jupiter','europa'],
+      ['jupiter','ganymede'],
+      ['jupiter','saturn'],
+      ['saturn','titan'],
+      ['saturn','uranus'],
+      ['uranus','neptune'],
+      ['neptune','pluto'],
+      ['earth','proxima-b'],
+      ['proxima-b','trappist-1e'],
+      ['trappist-1e','kepler-452b'],
+      ['kepler-452b','wasp-12b'],
+      ['wasp-12b','hd-189733b']
+    ];
+
+    const state = {
+      mode:'kids',
+      lang:'both',
+      search:'',
+      filters:{ type:'All', temp:'All', habitability:'All', system:'All' },
+      activeId:'sun',
+      music:false,
+      overlayOpen:false,
+      narrationPaused:false
+    };
+
+    const svg = document.getElementById('universe');
+    const worldList = document.getElementById('worldList');
+    const searchInput = document.getElementById('searchInput');
+    const captionTitle = document.getElementById('captionTitle');
+    const captionText = document.getElementById('captionText');
+    const modeLabel = document.getElementById('modeLabel');
+    const modeSuffix = document.getElementById('modeSuffix');
+    const detailName = document.getElementById('detailName');
+    const detailMeta = document.getElementById('detailMeta');
+    const detailStory = document.getElementById('detailStory');
+    const detailFacts = document.getElementById('detailFacts');
+    const planetHero = document.getElementById('planetHero');
+    const typeFilters = document.getElementById('typeFilters');
+    const tempFilters = document.getElementById('tempFilters');
+    const habitFilters = document.getElementById('habitFilters');
+    const systemFilters = document.getElementById('systemFilters');
+    const musicBtn = document.getElementById('musicBtn');
+    const bgm = document.getElementById('bgm');
+    const openImmersiveBtn = document.getElementById('openImmersiveBtn');
+    const quickNarrateBtn = document.getElementById('quickNarrateBtn');
+
+    const detailOverlay = document.getElementById('detailOverlay');
+    const overlayBackdrop = document.getElementById('overlayBackdrop');
+    const overlayShell = document.getElementById('overlayShell');
+    const overlayBackBtn = document.getElementById('overlayBackBtn');
+    const overlayCloseBtn = document.getElementById('overlayCloseBtn');
+    const overlayReplayTopBtn = document.getElementById('overlayReplayTopBtn');
+    const overlayKicker = document.getElementById('overlayKicker');
+    const overlayModeBadge = document.getElementById('overlayModeBadge');
+    const overlayName = document.getElementById('overlayName');
+    const overlayMeta = document.getElementById('overlayMeta');
+    const overlayStory = document.getElementById('overlayStory');
+    const overlayStoryNote = document.getElementById('overlayStoryNote');
+    const overlayFacts = document.getElementById('overlayFacts');
+    const overlayScene = document.getElementById('overlayScene');
+    const overlayThreeStage = document.getElementById('overlayThreeStage');
+    const overlayBody = document.getElementById('overlayBody');
+    const overlayRing = document.getElementById('overlayRing');
+    const overlayReplayBtn = document.getElementById('overlayReplayBtn');
+    const overlayPauseBtn = document.getElementById('overlayPauseBtn');
+    const narrationStatus = document.getElementById('narrationStatus');
+
+    const speechSupported = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+    const hasThree = typeof window.THREE !== 'undefined';
+    let narrationQueue = [];
+    const threeState = {
+      enabled: false,
+      renderer: null,
+      scene: null,
+      camera: null,
+      ambientLight: null,
+      keyLight: null,
+      rimLight: null,
+      sunLight: null,
+      root: null,
+      subjectGroup: null,
+      atmosphere: null,
+      glowShells: [],
+      ringMesh: null,
+      starField: null,
+      animationId: 0,
+      resizeObserver: null,
+      resizeHandler: null,
+      currentWorldId: null
+    };
+
+    function hexToRgb(hex) {
+      const value = hex.replace('#', '');
+      const safe = value.length === 3
+        ? value.split('').map(char => char + char).join('')
+        : value;
+      const int = Number.parseInt(safe, 16);
+      return {
+        r: (int >> 16) & 255,
+        g: (int >> 8) & 255,
+        b: int & 255
+      };
+    }
+
+    function withAlpha(hex, alpha) {
+      const { r, g, b } = hexToRgb(hex);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function createRingTexture(color) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      gradient.addColorStop(0, 'rgba(255,255,255,0)');
+      gradient.addColorStop(.12, 'rgba(255,255,255,.55)');
+      gradient.addColorStop(.28, color);
+      gradient.addColorStop(.5, 'rgba(255,255,255,.16)');
+      gradient.addColorStop(.72, color);
+      gradient.addColorStop(.88, 'rgba(255,255,255,.5)');
+      gradient.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < 120; i += 1) {
+        const x = Math.random() * canvas.width;
+        const width = 1 + Math.random() * 4;
+        const alpha = 0.04 + Math.random() * 0.14;
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        ctx.fillRect(x, 0, width, canvas.height);
+      }
+
+      const fade = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 20, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+      fade.addColorStop(0, 'rgba(255,255,255,0)');
+      fade.addColorStop(.46, 'rgba(255,255,255,0)');
+      fade.addColorStop(.72, 'rgba(255,255,255,.12)');
+      fade.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.fillStyle = fade;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.anisotropy = 4;
+      texture.needsUpdate = true;
+      return texture;
+    }
+
+    function ensureThreeScene() {
+      if (!hasThree || threeState.enabled) return;
+
+      const renderer = new THREE.WebGLRenderer({
+        antialias: window.devicePixelRatio < 2,
+        alpha: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+      camera.position.set(0, 0.2, 7.2);
+
+      const root = new THREE.Group();
+      scene.add(root);
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
+      const keyLight = new THREE.DirectionalLight(0xffffff, 2.1);
+      keyLight.position.set(3.6, 2.4, 4.8);
+      const rimLight = new THREE.DirectionalLight(0x72d7ff, 0.9);
+      rimLight.position.set(-5, -1.5, -3);
+      const sunLight = new THREE.PointLight(0xffcf6a, 0, 18, 2);
+      sunLight.position.set(0, 0, 0);
+
+      scene.add(ambientLight, keyLight, rimLight, sunLight);
+
+      const starGeometry = new THREE.BufferGeometry();
+      const starPositions = new Float32Array(600 * 3);
+      for (let i = 0; i < 600; i += 1) {
+        const radius = 10 + Math.random() * 12;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos((Math.random() * 2) - 1);
+        const index = i * 3;
+        starPositions[index] = radius * Math.sin(phi) * Math.cos(theta);
+        starPositions[index + 1] = radius * Math.cos(phi) * 0.65;
+        starPositions[index + 2] = radius * Math.sin(phi) * Math.sin(theta);
+      }
+      starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+      const starField = new THREE.Points(
+        starGeometry,
+        new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 0.045,
+          transparent: true,
+          opacity: 0.9
+        })
+      );
+      scene.add(starField);
+
+      threeState.renderer = renderer;
+      threeState.scene = scene;
+      threeState.camera = camera;
+      threeState.ambientLight = ambientLight;
+      threeState.keyLight = keyLight;
+      threeState.rimLight = rimLight;
+      threeState.sunLight = sunLight;
+      threeState.root = root;
+      threeState.starField = starField;
+      threeState.enabled = true;
+
+      overlayThreeStage.appendChild(renderer.domElement);
+      overlayScene.classList.add('has-three');
+
+      const resize = () => {
+        const rect = overlayThreeStage.getBoundingClientRect();
+        const width = Math.max(1, rect.width);
+        const height = Math.max(1, rect.height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height, false);
+      };
+      threeState.resizeHandler = resize;
+
+      if ('ResizeObserver' in window) {
+        threeState.resizeObserver = new ResizeObserver(resize);
+        threeState.resizeObserver.observe(overlayThreeStage);
+      } else {
+        window.addEventListener('resize', resize);
+      }
+
+      resize();
+    }
+
+    function disposeThreeObject(object) {
+      if (!object) return;
+      object.traverse(child => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) child.material.forEach(material => material.dispose());
+          else child.material.dispose();
+        }
+      });
+    }
+
+    function buildThreeSubject(world) {
+      if (!threeState.enabled) return;
+      if (threeState.subjectGroup) {
+        threeState.root.remove(threeState.subjectGroup);
+        disposeThreeObject(threeState.subjectGroup);
+      }
+
+      const group = new THREE.Group();
+      group.rotation.z = world.special === 'sun' ? 0.1 : -0.18;
+
+      const geometry = new THREE.SphereGeometry(world.special === 'sun' ? 1.56 : 1.48, 64, 64);
+      const material = world.special === 'sun'
+        ? new THREE.MeshStandardMaterial({
+            color: new THREE.Color(world.color),
+            emissive: new THREE.Color(world.color),
+            emissiveIntensity: 1.3,
+            roughness: 0.35,
+            metalness: 0.05
+          })
+        : new THREE.MeshStandardMaterial({
+            color: new THREE.Color(world.color),
+            emissive: new THREE.Color(world.color),
+            emissiveIntensity: 0.2,
+            roughness: 0.88,
+            metalness: world.type === 'Ice Giant' ? 0.1 : 0.02
+          });
+
+      const sphere = new THREE.Mesh(geometry, material);
+      group.add(sphere);
+
+      const atmosphere = new THREE.Mesh(
+        new THREE.SphereGeometry(world.special === 'sun' ? 1.84 : 1.68, 48, 48),
+        new THREE.MeshBasicMaterial({
+          color: new THREE.Color(world.color),
+          transparent: true,
+          opacity: world.special === 'sun' ? 0.16 : 0.09,
+          side: THREE.BackSide
+        })
+      );
+      group.add(atmosphere);
+
+      const glowShells = [];
+      if (world.special === 'sun') {
+        const warmGlow = new THREE.Mesh(
+          new THREE.SphereGeometry(2.1, 40, 40),
+          new THREE.MeshBasicMaterial({
+            color: new THREE.Color('#ffd46d'),
+            transparent: true,
+            opacity: 0.16
+          })
+        );
+        const outerGlow = new THREE.Mesh(
+          new THREE.SphereGeometry(2.5, 32, 32),
+          new THREE.MeshBasicMaterial({
+            color: new THREE.Color('#ff9b47'),
+            transparent: true,
+            opacity: 0.08
+          })
+        );
+        group.add(warmGlow, outerGlow);
+        glowShells.push(warmGlow, outerGlow);
+      }
+
+      let ringMesh = null;
+      if (world.ring) {
+        const ringTexture = createRingTexture(withAlpha(world.color, 0.86));
+        const ringMaterial = new THREE.MeshBasicMaterial({
+          map: ringTexture,
+          transparent: true,
+          opacity: 0.95,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+        ringMesh = new THREE.Mesh(new THREE.RingGeometry(2.05, 3.15, 128), ringMaterial);
+        ringMesh.rotation.x = -1.16;
+        ringMesh.rotation.z = -0.28;
+        group.add(ringMesh);
+      }
+
+      threeState.subjectGroup = group;
+      threeState.atmosphere = atmosphere;
+      threeState.glowShells = glowShells;
+      threeState.ringMesh = ringMesh;
+      threeState.currentWorldId = world.id;
+      threeState.root.add(group);
+    }
+
+    function animateThreeScene() {
+      if (!threeState.enabled) return;
+
+      const tick = () => {
+        threeState.animationId = window.requestAnimationFrame(tick);
+        if (!state.overlayOpen || document.hidden) return;
+
+        if (threeState.subjectGroup) {
+          const world = getActiveWorld();
+          const speed = world.special === 'sun' ? 0.0035 : 0.0055;
+          threeState.subjectGroup.rotation.y += speed;
+          threeState.subjectGroup.rotation.x += world.special === 'sun' ? 0.0018 : 0.0008;
+
+          if (threeState.ringMesh) {
+            threeState.ringMesh.rotation.z += 0.0015;
+          }
+
+          if (threeState.glowShells.length) {
+            threeState.glowShells.forEach((mesh, index) => {
+              mesh.rotation.y -= 0.001 * (index + 1);
+              mesh.rotation.z += 0.0008 * (index + 1);
+            });
+          }
+        }
+
+        if (threeState.starField) {
+          threeState.starField.rotation.y += 0.0005;
+          threeState.starField.rotation.x += 0.0002;
+        }
+
+        threeState.renderer.render(threeState.scene, threeState.camera);
+      };
+
+      tick();
+    }
+
+    function updateThreeScene(world) {
+      if (!hasThree) return;
+      ensureThreeScene();
+      if (!threeState.enabled) return;
+      if (threeState.currentWorldId !== world.id) buildThreeSubject(world);
+
+      const isSun = world.special === 'sun';
+      threeState.ambientLight.intensity = isSun ? 0.72 : 0.52;
+      threeState.keyLight.color.set(isSun ? '#ffe1a3' : '#ffffff');
+      threeState.keyLight.intensity = isSun ? 2.8 : 2.15;
+      threeState.rimLight.color.set(isSun ? '#ffb45f' : '#72d7ff');
+      threeState.rimLight.intensity = isSun ? 1.15 : 0.92;
+      threeState.sunLight.color.set(isSun ? '#ffb85c' : world.color);
+      threeState.sunLight.intensity = isSun ? 5.6 : 0.85;
+      threeState.sunLight.distance = isSun ? 22 : 15;
+
+      if (!threeState.animationId) animateThreeScene();
+    }
+
+    function destroyThreeScene() {
+      if (!threeState.enabled) return;
+      window.cancelAnimationFrame(threeState.animationId);
+      threeState.animationId = 0;
+      if (threeState.resizeObserver) threeState.resizeObserver.disconnect();
+      if (threeState.resizeHandler) window.removeEventListener('resize', threeState.resizeHandler);
+      if (threeState.subjectGroup) disposeThreeObject(threeState.subjectGroup);
+      if (threeState.starField) disposeThreeObject(threeState.starField);
+      threeState.renderer.dispose();
+    }
+
+    function labelByLang(en, zh) {
+      if (state.lang === 'en') return en;
+      if (state.lang === 'zh') return zh;
+      return `${en} · ${zh}`;
+    }
+
+    function worldText(world, keyEn, keyZh) {
+      if (state.lang === 'en') return world[keyEn];
+      if (state.lang === 'zh') return world[keyZh];
+      return `${world[keyEn]} ${world[keyZh]}`;
+    }
+
+    function modeLabelText() {
+      return state.mode === 'kids'
+        ? (state.lang === 'zh' ? '儿童' : state.lang === 'both' ? 'Kids 儿童' : 'Kids')
+        : (state.lang === 'zh' ? '天文' : state.lang === 'both' ? 'Astro 天文' : 'Astro');
+    }
+
+    function modeBadgeText() {
+      return state.mode === 'kids'
+        ? labelByLang('Kids mode', '儿童模式')
+        : labelByLang('Astro mode', '天文模式');
+    }
+
+    function combineFacts(enFacts, zhFacts) {
+      const enKeys = Object.keys(enFacts);
+      const zhKeys = Object.keys(zhFacts);
+      return Object.fromEntries(enKeys.map((key, index) => [
+        `${key} · ${zhKeys[index]}`,
+        `${enFacts[key]} · ${Object.values(zhFacts)[index]}`
+      ]));
+    }
+
+    function factsForWorld(world) {
+      if (state.mode === 'kids') {
+        if (state.lang === 'zh') return world.factsKidsZh;
+        if (state.lang === 'en') return world.factsKids;
+        return combineFacts(world.factsKids, world.factsKidsZh);
+      }
+      if (state.lang === 'zh') return world.factsAstroZh;
+      if (state.lang === 'en') return world.factsAstro;
+      return combineFacts(world.factsAstro, world.factsAstroZh);
+    }
+
+    function storyForWorld(world) {
+      return state.mode === 'kids'
+        ? worldText(world, 'blurbKids', 'blurbKidsZh')
+        : worldText(world, 'blurbAstro', 'blurbAstroZh');
+    }
+
+    function narrationSegments(world) {
+      const storyEn = state.mode === 'kids' ? world.blurbKids : world.blurbAstro;
+      const storyZh = state.mode === 'kids' ? world.blurbKidsZh : world.blurbAstroZh;
+      const facts = factsForWorld(world);
+      const factSentence = Object.entries(facts)
+        .slice(0, 3)
+        .map(([key, value]) => `${key}. ${value}.`)
+        .join(' ');
+
+      if (state.lang === 'en') return [{ text: `${world.name}. ${storyEn} ${factSentence}`, lang: 'en-US' }];
+      if (state.lang === 'zh') return [{ text: `${world.zh}。${storyZh} ${factSentence}`, lang: 'zh-CN' }];
+      return [
+        { text: `${world.name}. ${storyEn}`, lang: 'en-US' },
+        { text: `${world.zh}。${storyZh}`, lang: 'zh-CN' }
+      ];
+    }
+
+    function stopNarration() {
+      if (!speechSupported) return;
+      narrationQueue = [];
+      window.speechSynthesis.cancel();
+      state.narrationPaused = false;
+      updateNarrationStatus(labelByLang('Narration stopped.', '朗读已停止。'));
+    }
+
+    function updateNarrationStatus(message) {
+      narrationStatus.textContent = message;
+      overlayPauseBtn.classList.toggle('active', state.narrationPaused);
+      overlayPauseBtn.textContent = state.narrationPaused
+        ? labelByLang('Resume narration', '继续朗读')
+        : labelByLang('Pause narration', '暂停朗读');
+    }
+
+    function playNarration(world) {
+      if (!speechSupported) {
+        updateNarrationStatus(labelByLang('Speech synthesis is not supported in this browser.', '当前浏览器不支持语音朗读。'));
+        return;
+      }
+      window.speechSynthesis.cancel();
+      narrationQueue = narrationSegments(world);
+      state.narrationPaused = false;
+      updateNarrationStatus(labelByLang(`Narrating ${world.name}.`, `正在朗读 ${world.zh}。`));
+
+      narrationQueue.forEach((segment, index) => {
+        const utterance = new SpeechSynthesisUtterance(segment.text);
+        utterance.lang = segment.lang;
+        utterance.rate = state.mode === 'kids' ? 0.96 : 1.02;
+        utterance.pitch = state.mode === 'kids' ? 1.08 : 0.94;
+        utterance.onend = () => {
+          if (index === narrationQueue.length - 1 && !state.narrationPaused) {
+            updateNarrationStatus(labelByLang(`Narration finished for ${world.name}.`, `${world.zh} 的朗读已完成。`));
+          }
+        };
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    function toggleNarrationPause() {
+      if (!speechSupported) {
+        updateNarrationStatus(labelByLang('Speech synthesis is not supported in this browser.', '当前浏览器不支持语音朗读。'));
+        return;
+      }
+      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        window.speechSynthesis.pause();
+        state.narrationPaused = true;
+        updateNarrationStatus(labelByLang('Narration paused.', '朗读已暂停。'));
+      } else if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        state.narrationPaused = false;
+        updateNarrationStatus(labelByLang('Narration resumed.', '朗读已继续。'));
+      } else {
+        playNarration(getActiveWorld());
+      }
+    }
+
+    const options = {
+      type: ['All', ...new Set(worlds.map(w => w.type))],
+      temp: ['All', ...new Set(worlds.map(w => w.temp))],
+      habitability: ['All', ...new Set(worlds.map(w => w.habitability))],
+      system: ['All', ...new Set(worlds.map(w => w.system))]
+    };
+
+    document.getElementById('worldCount').textContent = worlds.length;
+    document.getElementById('systemCount').textContent = new Set(worlds.map(w => w.system)).size;
+
+    function filterText(value, key) {
+      if (value === 'All') return state.lang === 'zh' ? '全部' : state.lang === 'both' ? 'All 全部' : 'All';
+      const world = worlds.find(w => w[key] === value);
+      const zhKey = key === 'type'
+        ? 'typeZh'
+        : key === 'temp'
+          ? 'tempZh'
+          : key === 'habitability'
+            ? 'habitabilityZh'
+            : 'systemZh';
+      return world ? labelByLang(value, world[zhKey]) : value;
+    }
+
+    function buildFilterChips(container, key) {
+      options[key].forEach(value => {
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (value === 'All' ? ' active' : '');
+        btn.dataset.value = value;
+        btn.onclick = () => {
+          state.filters[key] = value;
+          render();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    buildFilterChips(typeFilters, 'type');
+    buildFilterChips(tempFilters, 'temp');
+    buildFilterChips(habitFilters, 'habitability');
+    buildFilterChips(systemFilters, 'system');
+
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.addEventListener('click', () => {
+      state.mode = btn.dataset.mode;
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+      render();
+      if (state.overlayOpen) playNarration(getActiveWorld());
+    }));
+
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => {
+      state.lang = btn.dataset.lang;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b === btn));
+      render();
+      if (state.overlayOpen) playNarration(getActiveWorld());
+    }));
+
+    musicBtn.addEventListener('click', async () => {
+      state.music = !state.music;
+      musicBtn.classList.toggle('active', state.music);
+      musicBtn.textContent = state.music
+        ? labelByLang('Pause BGM', '暂停背景音乐')
+        : `🎵 ${labelByLang('Atmosphere BGM', '氛围背景音乐')}`;
+      if (state.music) {
+        try {
+          await bgm.play();
+        } catch (error) {
+          console.log('Music autoplay blocked until interaction');
+        }
+      } else {
+        bgm.pause();
+      }
+    });
+
+    searchInput.addEventListener('input', event => {
+      state.search = event.target.value.toLowerCase().trim();
+      render();
+    });
+
+    function getFilteredWorlds() {
+      return worlds.filter(world => {
+        const text = `${world.name} ${world.zh} ${world.system} ${world.systemZh} ${world.type} ${world.typeZh}`.toLowerCase();
+        const searchOk = !state.search || text.includes(state.search);
+        const typeOk = state.filters.type === 'All' || world.type === state.filters.type;
+        const tempOk = state.filters.temp === 'All' || world.temp === state.filters.temp;
+        const habitOk = state.filters.habitability === 'All' || world.habitability === state.filters.habitability;
+        const systemOk = state.filters.system === 'All' || world.system === state.filters.system;
+        return searchOk && typeOk && tempOk && habitOk && systemOk;
+      });
+    }
+
+    function ensureActive(filtered) {
+      if (!filtered.some(w => w.id === state.activeId)) state.activeId = filtered[0]?.id || worlds[0].id;
+    }
+
+    function selectWorld(id, shouldOpenOverlay = false) {
+      state.activeId = id;
+      render();
+      if (shouldOpenOverlay) openOverlay(id);
+    }
+
+    function renderMap(filtered) {
+      const byId = Object.fromEntries(worlds.map(w => [w.id, w]));
+      const visibleIds = new Set(filtered.map(w => w.id));
+      svg.innerHTML = '<defs></defs>';
+
+      links.forEach(([a, b]) => {
+        if (!visibleIds.has(a) || !visibleIds.has(b)) return;
+        const w1 = byId[a];
+        const w2 = byId[b];
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const midX = (w1.x + w2.x) / 2;
+        const midY = Math.min(w1.y, w2.y) - 42;
+        path.setAttribute('d', `M ${w1.x} ${w1.y} Q ${midX} ${midY} ${w2.x} ${w2.y}`);
+        path.setAttribute('class', 'link-line');
+        svg.appendChild(path);
+      });
+
+      worlds.forEach(world => {
+        const visible = visibleIds.has(world.id);
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        group.setAttribute('class', `node ${visible ? '' : 'hidden'} ${state.activeId === world.id ? 'active' : ''}`);
+        group.setAttribute('transform', `translate(${world.x}, ${world.y})`);
+        group.setAttribute('role', 'button');
+        group.setAttribute('tabindex', visible ? '0' : '-1');
+
+        const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        glow.setAttribute('r', String(world.size * 1.9));
+        glow.setAttribute('fill', world.glow);
+        glow.setAttribute('class', 'planet-glow');
+        group.appendChild(glow);
+
+        if (world.special === 'sun') {
+          for (let i = 0; i < 10; i += 1) {
+            const angle = (Math.PI * 2 * i) / 10;
+            const ray = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            ray.setAttribute('x1', String(Math.cos(angle) * (world.size + 8)));
+            ray.setAttribute('y1', String(Math.sin(angle) * (world.size + 8)));
+            ray.setAttribute('x2', String(Math.cos(angle) * (world.size + 18)));
+            ray.setAttribute('y2', String(Math.sin(angle) * (world.size + 18)));
+            ray.setAttribute('class', 'sun-ray');
+            group.appendChild(ray);
+          }
+        }
+
+        if (world.ring) {
+          const ring = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+          ring.setAttribute('rx', String(world.size * 1.8));
+          ring.setAttribute('ry', String(world.size * 0.65));
+          ring.setAttribute('fill', 'none');
+          ring.setAttribute('stroke', 'rgba(255,238,195,.6)');
+          ring.setAttribute('stroke-width', '3');
+          ring.setAttribute('transform', 'rotate(-18)');
+          group.appendChild(ring);
+        }
+
+        const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        core.setAttribute('r', String(world.size));
+        core.setAttribute('fill', world.color);
+        core.setAttribute('class', 'planet-core');
+        group.appendChild(core);
+
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', String(world.size + 12));
+        label.setAttribute('y', '-2');
+        label.setAttribute('class', 'planet-label');
+        label.textContent = state.lang === 'zh'
+          ? world.zh
+          : state.lang === 'en'
+            ? world.name
+            : `${world.name} ${world.zh}`;
+        group.appendChild(label);
+
+        const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        sub.setAttribute('x', String(world.size + 12));
+        sub.setAttribute('y', '14');
+        sub.setAttribute('class', 'planet-sub');
+        sub.textContent = labelByLang(world.system, world.systemZh);
+        group.appendChild(sub);
+
+        const activate = () => selectWorld(world.id, true);
+        group.addEventListener('click', activate);
+        group.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            activate();
+          }
+        });
+        svg.appendChild(group);
+      });
+    }
+
+    function renderList(filtered) {
+      worldList.innerHTML = '';
+      filtered.forEach(world => {
+        const card = document.createElement('div');
+        card.className = 'world-card' + (state.activeId === world.id ? ' active' : '');
+        card.innerHTML = `
+          <div class="world-card-top">
+            <div>
+              <h3>${labelByLang(world.name, world.zh)}</h3>
+              <small>${labelByLang(world.system, world.systemZh)}</small>
+            </div>
+            <span class="legend-dot" style="background:${world.color}"></span>
+          </div>
+          <div class="world-tags">
+            <span class="tag">${labelByLang(world.type, world.typeZh)}</span>
+            <span class="tag">${labelByLang(world.temp, world.tempZh)}</span>
+            <span class="tag">${labelByLang(world.habitability, world.habitabilityZh)}</span>
+          </div>
+        `;
+        card.onclick = () => selectWorld(world.id, true);
+        worldList.appendChild(card);
+      });
+    }
+
+    function getActiveWorld() {
+      return worlds.find(w => w.id === state.activeId) || worlds[0];
+    }
+
+    function renderDetails(active) {
+      modeLabel.textContent = modeLabelText();
+      modeSuffix.textContent = state.lang === 'zh' ? '模式' : state.lang === 'both' ? ' mode 模式' : ' mode';
+      captionTitle.textContent = `${labelByLang(active.name, active.zh)} · ${labelByLang(active.type, active.typeZh)}`;
+      captionText.textContent = storyForWorld(active);
+      detailName.textContent = labelByLang(active.name, active.zh);
+      detailMeta.textContent = `${labelByLang(active.type, active.typeZh)} · ${labelByLang(active.system, active.systemZh)} · ${labelByLang(active.temp, active.tempZh)} · ${labelByLang(active.habitability, active.habitabilityZh)}`;
+      detailStory.textContent = storyForWorld(active);
+      planetHero.style.setProperty('--hero-color', active.color);
+      planetHero.style.setProperty('--hero-glow', active.glow);
+      planetHero.style.background = `radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), ${active.color} 42%, rgba(0,0,0,.82) 100%)`;
+      detailFacts.innerHTML = Object.entries(factsForWorld(active))
+        .map(([key, value]) => `<div class="fact-box"><strong>${key}</strong><span>${value}</span></div>`)
+        .join('');
+      openImmersiveBtn.textContent = labelByLang('Open immersive story', '打开沉浸故事');
+      quickNarrateBtn.textContent = labelByLang('Narrate now', '立即朗读');
+    }
+
+    function renderOverlay(active) {
+      overlayKicker.textContent = labelByLang('Immersive story', '沉浸故事');
+      overlayModeBadge.textContent = modeBadgeText();
+      overlayName.textContent = labelByLang(active.name, active.zh);
+      overlayMeta.textContent = `${labelByLang(active.type, active.typeZh)} · ${labelByLang(active.system, active.systemZh)} · ${labelByLang(active.temp, active.tempZh)} · ${labelByLang(active.habitability, active.habitabilityZh)}`;
+      overlayStory.textContent = storyForWorld(active);
+      overlayStoryNote.textContent = speechSupported
+        ? labelByLang('Narration starts automatically when this screen opens.', '打开后会自动开始朗读。')
+        : labelByLang('This browser does not support speech synthesis narration.', '当前浏览器不支持语音朗读。');
+
+      overlayBody.style.setProperty('--hero-color', active.color);
+      overlayBody.style.setProperty('--hero-glow', active.glow);
+      overlayScene.style.setProperty('--spot-x', `${Math.max(18, Math.min(78, (active.x / 1000) * 100))}%`);
+      overlayScene.style.setProperty('--spot-y', `${Math.max(18, Math.min(82, (active.y / 680) * 100))}%`);
+
+      overlayBody.className = `overlay-body ${active.special === 'sun' ? 'sun' : ''}`;
+      overlayBody.style.background = `
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.55), rgba(255,255,255,.08) 24%, transparent 26%),
+        radial-gradient(circle at 34% 34%, rgba(255,255,255,.16), transparent 52%),
+        radial-gradient(circle at 58% 64%, rgba(0,0,0,.34), transparent 62%),
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.28), ${active.color} 48%, rgba(8,10,20,.96) 100%)
+      `;
+      overlayBody.style.boxShadow = `inset -30px -30px 50px rgba(0,0,0,.3), 0 0 60px ${active.glow}, 0 0 140px rgba(255,255,255,.06)`;
+
+      overlayRing.classList.toggle('visible', Boolean(active.ring));
+      overlayRing.style.borderColor = active.ring ? 'rgba(255,238,195,.56)' : 'transparent';
+
+      overlayFacts.innerHTML = Object.entries(factsForWorld(active))
+        .map(([key, value]) => `<div class="overlay-fact"><strong>${key}</strong><span>${value}</span></div>`)
+        .join('');
+
+      if (state.overlayOpen) updateThreeScene(active);
+
+      overlayBackBtn.textContent = labelByLang('← Back to map', '← 返回地图');
+      overlayReplayBtn.textContent = labelByLang('Replay narration', '重播朗读');
+      overlayReplayTopBtn.textContent = labelByLang('Replay narration', '重播');
+      updateNarrationStatus(speechSupported
+        ? labelByLang('Narration ready.', '朗读准备就绪。')
+        : labelByLang('Speech synthesis is not available.', '当前没有可用的语音朗读。'));
+    }
+
+    function openOverlay(id = state.activeId) {
+      state.activeId = id;
+      state.overlayOpen = true;
+      const active = getActiveWorld();
+      detailOverlay.classList.add('open');
+      detailOverlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      render();
+      playNarration(active);
+    }
+
+    function closeOverlay() {
+      state.overlayOpen = false;
+      detailOverlay.classList.remove('open');
+      detailOverlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = window.innerWidth <= 1080 ? 'auto' : 'hidden';
+      if (threeState.animationId) {
+        window.cancelAnimationFrame(threeState.animationId);
+        threeState.animationId = 0;
+      }
+      stopNarration();
+    }
+
+    function syncFilterButtons() {
+      [['type', typeFilters], ['temp', tempFilters], ['habitability', habitFilters], ['system', systemFilters]]
+        .forEach(([key, container]) => {
+          Array.from(container.querySelectorAll('.chip')).forEach(btn => {
+            const value = btn.dataset.value;
+            btn.classList.toggle('active', value === state.filters[key]);
+            btn.textContent = filterText(value, key);
+          });
+        });
+    }
+
+    function renderStaticText() {
+      document.getElementById('eyebrowText').textContent = labelByLang('Interactive Space Atlas', '双语宇宙地图');
+      document.getElementById('titleText').textContent = labelByLang('Universe of Planets', '宇宙行星图');
+      document.getElementById('subtitleText').textContent = labelByLang(
+        'A cinematic constellation map for young kids, curious adults, and anyone who wants to wander from the Sun to TRAPPIST-1e without leaving the couch.',
+        '给孩子、好奇的大人和宇宙爱好者的电影感互动星球地图。'
+      );
+      document.getElementById('worldLabel').textContent = labelByLang('worlds', '世界');
+      document.getElementById('systemLabel').textContent = labelByLang('systems', '星系');
+      document.getElementById('finderTitle').textContent = labelByLang('World Finder', '星球导航');
+      document.getElementById('finderText').textContent = labelByLang(
+        'Filter by planet type, warmth, habitability, or star system. Click any card to focus the universe map.',
+        '按行星类型、温度、宜居度和星系筛选，点击卡片可聚焦到宇宙地图。'
+      );
+      searchInput.placeholder = labelByLang('Search planet, moon, exoplanet, star', '搜索行星、卫星、系外行星、恒星');
+      musicBtn.textContent = state.music
+        ? labelByLang('Pause BGM', '暂停背景音乐')
+        : `🎵 ${labelByLang('Atmosphere BGM', '氛围背景音乐')}`;
+    }
+
+    function render() {
+      const filtered = getFilteredWorlds();
+      ensureActive(filtered);
+      const active = getActiveWorld();
+      syncFilterButtons();
+      renderStaticText();
+      renderMap(filtered);
+      renderList(filtered);
+      renderDetails(active);
+      renderOverlay(active);
+    }
+
+    openImmersiveBtn.addEventListener('click', () => openOverlay(state.activeId));
+    quickNarrateBtn.addEventListener('click', () => {
+      render();
+      playNarration(getActiveWorld());
+    });
+    overlayBackdrop.addEventListener('click', closeOverlay);
+    overlayBackBtn.addEventListener('click', closeOverlay);
+    overlayCloseBtn.addEventListener('click', closeOverlay);
+    overlayReplayBtn.addEventListener('click', () => playNarration(getActiveWorld()));
+    overlayReplayTopBtn.addEventListener('click', () => playNarration(getActiveWorld()));
+    overlayPauseBtn.addEventListener('click', toggleNarrationPause);
+
+    window.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && state.overlayOpen) closeOverlay();
+    });
+
+    window.addEventListener('beforeunload', stopNarration);
+    window.addEventListener('beforeunload', destroyThreeScene);
+
+    render();
+  </script>
+</body>
+</html>
