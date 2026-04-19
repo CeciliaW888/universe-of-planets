@@ -591,9 +591,9 @@
     }
     .overlay-scene {
       background:
-        radial-gradient(circle at 48% 34%, rgba(255, 210, 116, .22), transparent 16%),
-        radial-gradient(circle at 50% 60%, rgba(70,215,255,.16), transparent 30%),
-        linear-gradient(180deg, rgba(7, 14, 34, .12), rgba(7, 14, 34, .46));
+        radial-gradient(circle at 50% 30%, rgba(255, 218, 132, .18), transparent 14%),
+        radial-gradient(circle at 50% 56%, rgba(70,215,255,.12), transparent 24%),
+        linear-gradient(180deg, rgba(7, 14, 34, .08), rgba(7, 14, 34, .4));
       border: 1px solid rgba(255,255,255,.08);
       padding: 96px 24px 24px;
       display: grid;
@@ -610,11 +610,11 @@
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 14px;
-      border-radius: 18px;
-      background: rgba(8, 13, 35, 0.68);
-      border: 1px solid rgba(171, 214, 255, 0.16);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(8, 13, 35, 0.5);
+      border: 1px solid rgba(171, 214, 255, 0.12);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
       color: #f8fbff;
     }
     .overlay-scene-pulse {
@@ -646,11 +646,11 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.1), transparent 22%),
-        radial-gradient(circle at 50% 52%, rgba(74, 161, 255, .12), transparent 30%),
-        conic-gradient(from 0deg, rgba(255,255,255,.05), transparent 28%, rgba(110, 199, 255, .04), transparent 65%, rgba(255,255,255,.05));
-      opacity: .88;
-      animation: spinOnly 18s linear infinite;
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), transparent 18%),
+        radial-gradient(circle at 50% 52%, rgba(74, 161, 255, .1), transparent 26%),
+        conic-gradient(from 0deg, rgba(255,255,255,.03), transparent 28%, rgba(110, 199, 255, .03), transparent 65%, rgba(255,255,255,.03));
+      opacity: .7;
+      animation: spinOnly 24s linear infinite;
     }
     .overlay-orbit,
     .overlay-orbit::before,
@@ -658,10 +658,10 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      width: min(92vmin, 840px);
-      height: min(92vmin, 840px);
+      width: min(84vmin, 760px);
+      height: min(84vmin, 760px);
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.05);
       transform: translate(-50%, -50%);
       pointer-events: none;
     }
@@ -679,22 +679,22 @@
     }
     .overlay-body-wrap {
       position: relative;
-      width: min(80vmin, 760px);
-      height: min(80vmin, 760px);
+      width: min(88vmin, 860px);
+      height: min(88vmin, 860px);
       display: grid;
       place-items: center;
       animation: floatStage 5.8s ease-in-out infinite;
       z-index: 1;
-      filter: drop-shadow(0 50px 140px rgba(0, 0, 0, .56));
+      filter: drop-shadow(0 58px 160px rgba(0, 0, 0, .62));
     }
     .overlay-3d {
       position: absolute;
-      inset: -12%;
-      border-radius: 40%;
+      inset: -4%;
+      border-radius: 50%;
       overflow: hidden;
       opacity: 0;
       transition: opacity .22s ease, transform .55s cubic-bezier(.2, .8, .18, 1);
-      transform: scale(.94);
+      transform: scale(.96);
       touch-action: none;
     }
     .overlay-3d canvas {
@@ -721,10 +721,10 @@
       inset: -22%;
       border-radius: 50%;
       background:
-        conic-gradient(from 0deg, transparent 0 10%, rgba(255,255,255,.10) 16%, transparent 22%, rgba(255,177,92,.22) 33%, transparent 44%, rgba(70,215,255,.18) 58%, transparent 72%, rgba(255,255,255,.12) 84%, transparent 100%);
+        conic-gradient(from 0deg, transparent 0 14%, rgba(255,255,255,.08) 18%, transparent 26%, rgba(255,177,92,.18) 38%, transparent 50%, rgba(70,215,255,.14) 64%, transparent 78%, rgba(255,255,255,.08) 88%, transparent 100%);
       filter: blur(18px);
-      animation: beamSweep 12s linear infinite;
-      opacity: .78;
+      animation: beamSweep 14s linear infinite;
+      opacity: .44;
     }
     .overlay-body {
       position: relative;
@@ -777,13 +777,13 @@
     }
     .overlay-ring {
       position: absolute;
-      width: 102%;
-      height: 36%;
+      width: 110%;
+      height: 40%;
       border-radius: 50%;
-      border: 7px solid rgba(255,238,195,.54);
+      border: 8px solid rgba(255,238,195,.66);
       transform: rotate(-18deg);
       opacity: 0;
-      box-shadow: 0 0 24px rgba(255,238,195,.18);
+      box-shadow: 0 0 36px rgba(255,238,195,.24);
       pointer-events: none;
     }
     .overlay-ring.visible { opacity: 1; }
@@ -806,12 +806,12 @@
       left: 24px;
       bottom: 24px;
       z-index: 2;
-      max-width: 360px;
-      padding: 14px 16px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, rgba(255, 202, 106, 0.18), rgba(91, 189, 255, 0.12));
-      border: 1px solid rgba(171, 214, 255, 0.14);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+      max-width: 280px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(8, 13, 35, 0.38);
+      border: 1px solid rgba(171, 214, 255, 0.1);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
       opacity: 0;
       transform: translateY(12px);
       transition: opacity .45s ease, transform .45s ease;
@@ -841,12 +841,12 @@
       position: absolute;
       inset: auto 24px 24px auto;
       z-index: 3;
-      width: min(100%, 320px);
-      padding: 14px 16px;
+      width: min(100%, 260px);
+      padding: 12px 14px;
       border-radius: 18px;
-      background: rgba(7, 13, 31, .76);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 18px 50px rgba(0, 0, 0, .28);
+      background: rgba(7, 13, 31, .62);
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, .22);
       color: #f6f9ff;
       opacity: 0;
       transform: translateY(12px);
@@ -917,15 +917,15 @@
     .overlay-copy {
       align-self: end;
       justify-self: end;
-      width: min(100%, 390px);
+      width: min(100%, 340px);
       margin: 92px 0 0;
       margin-left: 18px;
-      background: linear-gradient(180deg, rgba(252, 253, 255, .94), rgba(242, 246, 255, .88));
-      border: 1px solid rgba(255,255,255,.22);
-      box-shadow: 0 20px 60px rgba(3, 8, 24, .32);
-      backdrop-filter: blur(18px) saturate(118%);
-      -webkit-backdrop-filter: blur(18px) saturate(118%);
-      padding: 22px 22px 18px;
+      background: linear-gradient(180deg, rgba(252, 253, 255, .9), rgba(242, 246, 255, .82));
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 16px 42px rgba(3, 8, 24, .24);
+      backdrop-filter: blur(14px) saturate(112%);
+      -webkit-backdrop-filter: blur(14px) saturate(112%);
+      padding: 20px 18px 16px;
       display: grid;
       grid-template-rows: auto auto minmax(0, 1fr);
       gap: 12px;
@@ -968,10 +968,10 @@
     }
     .overlay-story {
       margin: 0;
-      font-size: clamp(15px, 1.1vw, 17px);
-      line-height: 1.62;
+      font-size: clamp(14px, 1vw, 16px);
+      line-height: 1.58;
       color: #1f2f63;
-      max-width: 34ch;
+      max-width: 30ch;
       font-weight: 500;
     }
     .overlay-story-note {
@@ -2373,26 +2373,29 @@
         powerPreference: 'high-performance'
       });
       renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.12;
       renderer.setClearColor(0x000000, 0);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
 
       const scene = new THREE.Scene();
       scene.fog = new THREE.FogExp2(0x060a18, 0.038);
-      const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-      camera.position.set(0, 0.22, 6.9);
+      const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 100);
+      camera.position.set(0, 0.12, 5.9);
 
       const root = new THREE.Group();
       scene.add(root);
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.42);
-      const keyLight = new THREE.DirectionalLight(0xffffff, 2.4);
-      keyLight.position.set(4.2, 2.8, 4.6);
-      const rimLight = new THREE.DirectionalLight(0x72d7ff, 1.1);
-      rimLight.position.set(-4.8, -0.8, -3.8);
-      const sunLight = new THREE.PointLight(0xffcf6a, 0, 18, 2);
-      sunLight.position.set(-1.8, 0.8, 2.2);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.16);
+      const fillLight = new THREE.HemisphereLight(0x9fd6ff, 0x050814, 0.34);
+      const keyLight = new THREE.DirectionalLight(0xfff2cb, 4.8);
+      keyLight.position.set(6.4, 2.8, 5.8);
+      const rimLight = new THREE.DirectionalLight(0x6fdcff, 2.1);
+      rimLight.position.set(-6.8, 0.2, -4.8);
+      const sunLight = new THREE.PointLight(0xffb457, 0, 24, 2);
+      sunLight.position.set(-2.4, 1.4, 3.2);
 
-      scene.add(ambientLight, keyLight, rimLight, sunLight);
+      scene.add(ambientLight, fillLight, keyLight, rimLight, sunLight);
 
       const starGeometry = new THREE.BufferGeometry();
       const starPositions = new Float32Array(900 * 3);
@@ -2443,6 +2446,7 @@
       threeState.scene = scene;
       threeState.camera = camera;
       threeState.ambientLight = ambientLight;
+      threeState.fillLight = fillLight;
       threeState.keyLight = keyLight;
       threeState.rimLight = rimLight;
       threeState.sunLight = sunLight;
@@ -2522,46 +2526,51 @@
       const group = new THREE.Group();
       group.rotation.z = world.special === 'sun' ? 0.08 : -0.16;
 
-      const geometry = new THREE.SphereGeometry(world.special === 'sun' ? 2.14 : 1.92, 96, 96);
+      const radius = world.special === 'sun' ? 2.52 : 2.28;
+      const geometry = new THREE.SphereGeometry(radius, 128, 128);
       const texture = createPlanetTexture(world);
       const material = world.special === 'sun'
-        ? new THREE.MeshStandardMaterial({
+        ? new THREE.MeshPhysicalMaterial({
             map: texture,
             color: new THREE.Color(world.color),
             emissive: new THREE.Color(world.color),
-            emissiveIntensity: 1.1,
-            roughness: 0.4,
-            metalness: 0.05
+            emissiveIntensity: 1.85,
+            roughness: 0.26,
+            metalness: 0.02,
+            clearcoat: 0.42,
+            clearcoatRoughness: 0.26
           })
-        : new THREE.MeshStandardMaterial({
+        : new THREE.MeshPhysicalMaterial({
             map: texture,
             color: new THREE.Color(world.color),
             emissive: new THREE.Color(world.color),
-            emissiveIntensity: 0.14,
-            roughness: 0.84,
-            metalness: world.type === 'Ice Giant' ? 0.1 : 0.02
+            emissiveIntensity: 0.08,
+            roughness: 0.66,
+            metalness: world.type === 'Ice Giant' ? 0.16 : 0.04,
+            clearcoat: world.type.includes('Gas') ? 0.38 : 0.18,
+            clearcoatRoughness: world.type.includes('Gas') ? 0.34 : 0.56
           });
 
       const sphere = new THREE.Mesh(geometry, material);
       group.add(sphere);
 
       const atmosphere = new THREE.Mesh(
-        new THREE.SphereGeometry(world.special === 'sun' ? 2.44 : 2.16, 60, 60),
+        new THREE.SphereGeometry(radius * (world.special === 'sun' ? 1.13 : 1.08), 72, 72),
         new THREE.MeshBasicMaterial({
-          color: new THREE.Color(world.color),
+          color: new THREE.Color(world.special === 'sun' ? '#ffd171' : mixHex(world.color, '#8eddff', 0.42)),
           transparent: true,
-          opacity: world.special === 'sun' ? 0.18 : 0.1,
+          opacity: world.special === 'sun' ? 0.26 : 0.14,
           side: THREE.BackSide
         })
       );
       group.add(atmosphere);
 
       const atmosphereShell = new THREE.Mesh(
-        new THREE.SphereGeometry(world.special === 'sun' ? 2.56 : 2.24, 48, 48),
+        new THREE.SphereGeometry(radius * (world.special === 'sun' ? 1.21 : 1.12), 64, 64),
         new THREE.MeshBasicMaterial({
           color: new THREE.Color(world.special === 'sun' ? '#ffd68d' : mixHex(world.color, '#8eddff', 0.35)),
           transparent: true,
-          opacity: world.special === 'sun' ? 0.06 : 0.12,
+          opacity: world.special === 'sun' ? 0.12 : 0.18,
           side: THREE.BackSide
         })
       );
@@ -2570,19 +2579,19 @@
       const glowShells = [];
       if (world.special === 'sun') {
         const warmGlow = new THREE.Mesh(
-          new THREE.SphereGeometry(2.76, 48, 48),
+          new THREE.SphereGeometry(radius * 1.3, 48, 48),
           new THREE.MeshBasicMaterial({
             color: new THREE.Color('#ffd46d'),
             transparent: true,
-            opacity: 0.18
+            opacity: 0.24
           })
         );
         const outerGlow = new THREE.Mesh(
-          new THREE.SphereGeometry(3.26, 36, 36),
+          new THREE.SphereGeometry(radius * 1.56, 36, 36),
           new THREE.MeshBasicMaterial({
             color: new THREE.Color('#ff9b47'),
             transparent: true,
-            opacity: 0.09
+            opacity: 0.13
           })
         );
         group.add(warmGlow, outerGlow);
@@ -2595,13 +2604,13 @@
         const ringMaterial = new THREE.MeshBasicMaterial({
           map: ringTexture,
           transparent: true,
-          opacity: 0.95,
+          opacity: 1,
           side: THREE.DoubleSide,
           depthWrite: false
         });
-        ringMesh = new THREE.Mesh(new THREE.RingGeometry(2.55, 4.08, 160), ringMaterial);
-        ringMesh.rotation.x = -1.08;
-        ringMesh.rotation.z = -0.34;
+        ringMesh = new THREE.Mesh(new THREE.RingGeometry(radius * 1.34, radius * 2.18, 220), ringMaterial);
+        ringMesh.rotation.x = -1.02;
+        ringMesh.rotation.z = -0.38;
         group.add(ringMesh);
       }
 
@@ -2623,16 +2632,16 @@
 
         if (threeState.subjectGroup) {
           const world = getActiveWorld();
-          const speed = world.special === 'sun' ? 0.0028 : 0.0038;
+          const speed = world.special === 'sun' ? 0.0036 : 0.0046;
           threeState.targetRotationY += speed;
-          threeState.targetRotationX = Math.sin(performance.now() * 0.00028) * (world.special === 'sun' ? 0.08 : 0.05);
-          threeState.dragRotationY *= 0.94;
-          threeState.dragRotationX *= 0.9;
-          threeState.subjectGroup.rotation.y += ((threeState.targetRotationY + threeState.dragRotationY) - threeState.subjectGroup.rotation.y) * 0.08;
-          threeState.subjectGroup.rotation.x += ((threeState.targetRotationX + threeState.dragRotationX) - threeState.subjectGroup.rotation.x) * 0.08;
+          threeState.targetRotationX = Math.sin(performance.now() * 0.00032) * (world.special === 'sun' ? 0.1 : 0.06);
+          threeState.dragRotationY *= 0.95;
+          threeState.dragRotationX *= 0.91;
+          threeState.subjectGroup.rotation.y += ((threeState.targetRotationY + threeState.dragRotationY) - threeState.subjectGroup.rotation.y) * 0.1;
+          threeState.subjectGroup.rotation.x += ((threeState.targetRotationX + threeState.dragRotationX) - threeState.subjectGroup.rotation.x) * 0.1;
 
           if (threeState.ringMesh) {
-            threeState.ringMesh.rotation.z += 0.0011;
+            threeState.ringMesh.rotation.z += 0.0014;
           }
 
           if (threeState.glowShells.length) {
@@ -2666,19 +2675,22 @@
       if (threeState.currentWorldId !== world.id) buildThreeSubject(world);
 
       const isSun = world.special === 'sun';
-      threeState.ambientLight.intensity = isSun ? 0.58 : 0.36;
-      threeState.keyLight.color.set(isSun ? '#ffe1a3' : '#ffffff');
-      threeState.keyLight.intensity = isSun ? 3.4 : 2.6;
-      threeState.rimLight.color.set(isSun ? '#ffb45f' : '#72d7ff');
-      threeState.rimLight.intensity = isSun ? 1.3 : 1.1;
-      threeState.sunLight.color.set(isSun ? '#ffb85c' : world.color);
-      threeState.sunLight.intensity = isSun ? 6.2 : 1.2;
-      threeState.sunLight.distance = isSun ? 24 : 16;
-      threeState.camera.fov = isSun ? 28 : 24;
-      threeState.camera.position.z = isSun ? 7.1 : 5.25;
-      threeState.camera.position.y = isSun ? 0.28 : 0.14;
-      threeState.targetRotationX = isSun ? 0.08 : 0.03;
-      threeState.targetRotationY = 0.22;
+      threeState.ambientLight.intensity = isSun ? 0.2 : 0.12;
+      if (threeState.fillLight) threeState.fillLight.intensity = isSun ? 0.52 : 0.28;
+      threeState.keyLight.color.set(isSun ? '#ffe0a8' : '#fff3d1');
+      threeState.keyLight.intensity = isSun ? 6.4 : 5.4;
+      threeState.keyLight.position.set(6.8, 2.8, 5.8);
+      threeState.rimLight.color.set(isSun ? '#ff9b40' : '#72d7ff');
+      threeState.rimLight.intensity = isSun ? 3.2 : 2.4;
+      threeState.rimLight.position.set(-6.6, 0.25, -4.8);
+      threeState.sunLight.color.set(isSun ? '#ffb85c' : mixHex(world.color, '#ffd48a', 0.32));
+      threeState.sunLight.intensity = isSun ? 9.4 : 3.1;
+      threeState.sunLight.distance = isSun ? 32 : 22;
+      threeState.camera.fov = isSun ? 23 : 21;
+      threeState.camera.position.z = isSun ? 6.05 : 5.1;
+      threeState.camera.position.y = isSun ? 0.12 : 0.02;
+      threeState.targetRotationX = isSun ? 0.09 : 0.04;
+      threeState.targetRotationY = 0.28;
       threeState.dragRotationX = 0;
       threeState.dragRotationY = 0;
       threeState.camera.updateProjectionMatrix();
