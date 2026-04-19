@@ -8,21 +8,21 @@
   <style>
     :root {
       --bg: #fff7ea;
-      --bg-deep: #fde8ff;
-      --panel: rgba(255, 255, 255, 0.7);
-      --panel-strong: rgba(255, 251, 245, 0.9);
-      --line: rgba(136, 116, 193, 0.16);
-      --text: #2f2757;
-      --muted: #756d95;
+      --bg-deep: #f6ddff;
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-strong: rgba(255, 251, 245, 0.96);
+      --line: rgba(88, 68, 148, 0.18);
+      --text: #1c1540;
+      --muted: #4f4678;
       --accent: #ff7fb2;
       --accent-2: #5bbdff;
       --accent-3: #ffbf69;
       --accent-4: #8cda8f;
-      --shadow: 0 22px 60px rgba(109, 88, 163, 0.18);
+      --shadow: 0 24px 70px rgba(74, 55, 128, 0.24);
       --radius: 28px;
       --hero-color: #ffd27e;
       --hero-glow: rgba(255, 201, 116, 0.52);
-      --button-text: #3b2f68;
+      --button-text: #281e58;
     }
 
     * { box-sizing: border-box; }
@@ -99,6 +99,16 @@
       from { opacity: 0; transform: scale(.985); }
       to { opacity: 1; transform: scale(1); }
     }
+    @keyframes cinematicPush {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 34px, 0) scale(1.06);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
     @keyframes panelRise {
       from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
@@ -117,6 +127,13 @@
         "filters filters";
       gap: 16px;
       padding: 18px;
+      transition: transform .55s cubic-bezier(.2, .8, .16, 1), filter .55s ease, opacity .4s ease;
+    }
+    body.overlay-active .app {
+      transform: scale(.935) translateY(14px);
+      filter: blur(12px) saturate(.72);
+      opacity: .24;
+      pointer-events: none;
     }
     .glass {
       background: var(--panel);
@@ -136,17 +153,18 @@
       padding: 16px 18px;
     }
     .title-wrap { display: flex; flex-direction: column; gap: 6px; }
-    .eyebrow { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: #3a95d8; font-weight: 700; }
+    .eyebrow { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: #1c76c2; font-weight: 800; }
     h1 { margin: 0; font-size: clamp(24px, 4vw, 42px); line-height: 1.05; }
-    .subtitle { color: var(--muted); font-size: 14px; max-width: 760px; line-height: 1.5; }
+    .subtitle { color: var(--muted); font-size: 15px; max-width: 760px; line-height: 1.55; font-weight: 600; }
     .stat-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
     .pill {
       padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.56);
-      border: 1px solid rgba(124, 105, 182, 0.16);
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(108, 87, 171, 0.18);
       color: var(--muted);
       font-size: 13px;
+      font-weight: 700;
     }
     .pill strong { color: var(--text); font-size: 15px; margin-right: 6px; }
 
@@ -162,19 +180,21 @@
       overflow: hidden;
       border-radius: inherit;
       background:
-        radial-gradient(circle at 50% 48%, rgba(255, 248, 225, 0.96) 0%, rgba(234, 241, 255, 0.95) 48%, rgba(213, 233, 255, 0.92) 100%),
-        linear-gradient(135deg, rgba(255,255,255,.3), transparent 40%);
+        radial-gradient(circle at 50% 44%, rgba(255, 223, 114, 0.28) 0%, rgba(255, 223, 114, 0.1) 14%, transparent 30%),
+        radial-gradient(circle at 18% 18%, rgba(255, 140, 198, 0.18), transparent 18%),
+        radial-gradient(circle at 82% 16%, rgba(91, 189, 255, 0.24), transparent 20%),
+        linear-gradient(180deg, #18204c 0%, #101536 55%, #090d23 100%);
     }
     .orbit-grid {
       position: absolute;
       inset: 5% 4%;
       border-radius: 50%;
-      border: 1px solid rgba(132, 159, 227, 0.26);
+      border: 1px solid rgba(180, 214, 255, 0.24);
       box-shadow:
         0 0 0 80px rgba(123, 158, 232, 0.08),
         0 0 0 160px rgba(123, 158, 232, 0.06),
         0 0 0 240px rgba(123, 158, 232, 0.04);
-      opacity: .8;
+      opacity: .92;
       pointer-events: none;
     }
     .map-vignette {
@@ -184,9 +204,38 @@
       background:
         radial-gradient(circle at 20% 25%, rgba(255,180,90,.18), transparent 22%),
         radial-gradient(circle at 75% 30%, rgba(70,215,255,.16), transparent 20%),
-        linear-gradient(180deg, transparent, rgba(255,255,255,.1));
+        linear-gradient(180deg, transparent, rgba(0,0,0,.18));
     }
     svg#universe { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .scene-banner {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 2;
+      max-width: 290px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: rgba(8, 13, 35, 0.76);
+      border: 1px solid rgba(171, 214, 255, 0.16);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.26);
+      color: #f8fbff;
+    }
+    .scene-banner strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #ffd988;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .scene-banner span {
+      display: block;
+      color: rgba(245, 249, 255, 0.96);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
     .node {
       cursor: pointer;
       transition: transform .25s ease, opacity .25s ease;
@@ -201,15 +250,22 @@
     .node:hover .planet-core { transform: scale(1.07); }
     .planet-label {
       font-size: 13px;
-      fill: rgba(56, 44, 104, .92);
+      fill: rgba(249, 251, 255, .98);
       font-weight: 700;
       paint-order: stroke;
-      stroke: rgba(255, 251, 244, .96);
-      stroke-width: 5px;
+      stroke: rgba(8, 13, 35, .88);
+      stroke-width: 6px;
       stroke-linejoin: round;
     }
-    .planet-sub { font-size: 11px; fill: rgba(104, 112, 164, .95); }
-    .link-line { stroke: rgba(115, 145, 255, 0.4); stroke-width: 1.4; stroke-dasharray: 5 8; opacity: .78; }
+    .planet-sub {
+      font-size: 11px;
+      fill: rgba(216, 228, 255, .94);
+      paint-order: stroke;
+      stroke: rgba(8, 13, 35, .82);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+    .link-line { stroke: rgba(146, 194, 255, 0.46); stroke-width: 1.5; stroke-dasharray: 5 8; opacity: .82; }
     .sun-ray {
       stroke: rgba(255, 196, 92, .72);
       stroke-width: 2.2;
@@ -232,8 +288,9 @@
       gap: 6px;
       padding: 6px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(123, 104, 177, 0.14);
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(108, 87, 171, 0.16);
+      box-shadow: 0 10px 24px rgba(9, 13, 31, 0.14);
     }
     .language-select {
       align-items: center;
@@ -242,7 +299,7 @@
     .language-select label {
       font-size: 12px;
       font-weight: 700;
-      color: var(--muted);
+      color: #473c76;
       text-transform: uppercase;
       letter-spacing: .14em;
     }
@@ -263,6 +320,7 @@
       border-radius: 999px;
       padding: 10px 14px;
       font-size: 13px;
+      font-weight: 800;
       transition: .2s ease;
     }
     .mode-btn.active, .music-btn.active, .chip.active, .detail-action.primary, .overlay-btn.primary, .narration-btn.active {
@@ -274,8 +332,8 @@
       width: 46px;
       height: 46px;
       padding: 0;
-      background: rgba(255,255,255,.55);
-      border: 1px solid rgba(123, 104, 177, 0.14);
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(108, 87, 171, 0.16);
       font-size: 18px;
       display: inline-flex;
       align-items: center;
@@ -296,9 +354,11 @@
       max-width: 510px;
       padding: 14px 16px;
       z-index: 2;
+      background: rgba(8, 13, 35, 0.72);
+      border-color: rgba(171, 214, 255, 0.16);
     }
-    .map-caption strong { display: block; margin-bottom: 6px; }
-    .map-caption p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .map-caption strong { display: block; margin-bottom: 6px; color: #f8fbff; font-size: 15px; }
+    .map-caption p { margin: 0; color: rgba(232, 240, 255, 0.9); font-size: 14px; line-height: 1.58; font-weight: 600; }
 
     .sidebar {
       grid-area: side;
@@ -310,22 +370,24 @@
       gap: 14px;
     }
     .side-head h2 { margin: 0; font-size: 20px; }
-    .side-head p { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .side-head p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.5; font-weight: 600; }
     .search {
       width: 100%;
       padding: 12px 14px;
       border-radius: 16px;
-      border: 1px solid rgba(123, 104, 177, 0.14);
-      background: rgba(255,255,255,.64);
+      border: 1px solid rgba(108, 87, 171, 0.16);
+      background: rgba(255,255,255,.92);
       color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
       outline: none;
     }
     .world-list { overflow: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
     .world-card {
       padding: 12px;
       border-radius: 18px;
-      background: rgba(255,255,255,0.52);
-      border: 1px solid rgba(123, 104, 177, 0.12);
+      background: rgba(255,255,255,0.76);
+      border: 1px solid rgba(108, 87, 171, 0.14);
       cursor: pointer;
       transition: .2s ease;
     }
@@ -336,14 +398,15 @@
     }
     .world-card-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
     .world-card h3 { margin: 0; font-size: 15px; }
-    .world-card small { color: var(--muted); display: block; margin-top: 3px; }
+    .world-card small { color: var(--muted); display: block; margin-top: 3px; font-weight: 700; }
     .world-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
     .tag {
       padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(255,255,255,.72);
-      color: var(--muted);
+      background: rgba(248,250,255,.92);
+      color: #42376c;
       font-size: 11px;
+      font-weight: 800;
     }
 
     .detail-panel {
@@ -387,22 +450,22 @@
       z-index: 1;
     }
     .detail-copy h2 { margin: 0; font-size: clamp(24px, 3vw, 32px); }
-    .detail-copy .meta { margin-top: 8px; color: var(--muted); font-size: 14px; }
-    .detail-copy p { margin: 12px 0 0; color: #483d70; line-height: 1.65; font-size: 14px; }
+    .detail-copy .meta { margin-top: 8px; color: var(--muted); font-size: 14px; font-weight: 700; }
+    .detail-copy p { margin: 12px 0 0; color: #2f255d; line-height: 1.7; font-size: 15px; font-weight: 600; }
     .detail-copy-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
     .detail-action {
-      background: rgba(255,255,255,.64);
-      border: 1px solid rgba(123, 104, 177, 0.14);
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(108, 87, 171, 0.15);
     }
     .detail-facts { display: grid; gap: 8px; }
     .fact-box {
       padding: 10px 12px;
       border-radius: 16px;
-      background: rgba(255,255,255,.62);
-      border: 1px solid rgba(123, 104, 177, 0.12);
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(108, 87, 171, 0.14);
     }
-    .fact-box strong { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
-    .fact-box span { font-size: 14px; color: var(--text); }
+    .fact-box strong { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 700; }
+    .fact-box span { font-size: 14px; color: var(--text); font-weight: 700; }
 
     .filters {
       grid-area: filters;
@@ -415,9 +478,9 @@
     .filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .filter-group label { font-size: 12px; text-transform: uppercase; letter-spacing: .18em; color: var(--muted); }
     .chip {
-      background: rgba(255,255,255,.58);
-      border: 1px solid rgba(123, 104, 177, 0.14);
-      color: var(--muted);
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(108, 87, 171, 0.15);
+      color: #42376c;
       padding: 9px 12px;
     }
     .legend-dot { width: 10px; height: 10px; border-radius: 999px; display: inline-block; margin-right: 6px; }
@@ -425,13 +488,13 @@
     .overlay {
       position: fixed;
       inset: 0;
-      z-index: 40;
+      z-index: 80;
       display: grid;
       place-items: center;
-      padding: 20px;
+      padding: 0;
       opacity: 0;
       pointer-events: none;
-      transition: opacity .28s ease;
+      transition: opacity .35s ease;
     }
     .overlay.open {
       opacity: 1;
@@ -441,42 +504,55 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 20% 20%, rgba(255,173,88,.24), transparent 20%),
-        radial-gradient(circle at 80% 18%, rgba(70,215,255,.22), transparent 20%),
-        linear-gradient(180deg, rgba(255,248,238,.24), rgba(168, 174, 228, .56));
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+        radial-gradient(circle at 20% 18%, rgba(255,173,88,.18), transparent 22%),
+        radial-gradient(circle at 80% 16%, rgba(70,215,255,.18), transparent 20%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.04), transparent 30%),
+        linear-gradient(180deg, rgba(5, 10, 24, .58), rgba(5, 9, 22, .82));
+      backdrop-filter: blur(24px) saturate(115%);
+      -webkit-backdrop-filter: blur(24px) saturate(115%);
     }
     .overlay-shell {
       position: relative;
-      width: min(1180px, 100%);
-      height: min(88vh, 860px);
+      width: min(100vw - 24px, 1560px);
+      height: min(100vh - 24px, 1040px);
       display: grid;
-      grid-template-columns: minmax(300px, 1.05fr) minmax(0, .95fr);
-      gap: 18px;
-      padding: 18px;
-      border-radius: 34px;
-      border: 1px solid rgba(255,255,255,.08);
+      grid-template-columns: minmax(0, 1.45fr) minmax(320px, .55fr);
+      gap: 0;
+      padding: 22px;
+      border-radius: 36px;
+      border: 1px solid rgba(255,255,255,.1);
       background:
-        linear-gradient(145deg, rgba(255, 249, 241, .95), rgba(239, 245, 255, .92)),
-        radial-gradient(circle at 16% 16%, rgba(255,255,255,.6), transparent 20%);
-      box-shadow: 0 36px 110px rgba(123, 112, 181, .24);
-      animation: overlayIn .3s ease;
+        radial-gradient(circle at 12% 14%, rgba(255,255,255,.08), transparent 20%),
+        radial-gradient(circle at 82% 18%, rgba(113, 198, 255, .08), transparent 22%),
+        linear-gradient(160deg, rgba(9, 18, 40, .98), rgba(13, 24, 55, .96) 42%, rgba(8, 13, 32, .98));
+      box-shadow: 0 40px 130px rgba(2, 5, 18, .52);
+      animation: cinematicPush .5s cubic-bezier(.18, .78, .18, 1);
       overflow: hidden;
+      isolation: isolate;
     }
     .overlay-shell::before {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at var(--spot-x, 18%) var(--spot-y, 24%), rgba(255,255,255,.07), transparent 24%);
+        radial-gradient(circle at var(--spot-x, 18%) var(--spot-y, 24%), rgba(255,255,255,.12), transparent 22%);
+      pointer-events: none;
+    }
+    .overlay-shell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 18%, transparent 82%, rgba(255,255,255,.04)),
+        radial-gradient(circle at center, transparent 48%, rgba(0,0,0,.34) 100%);
+      mix-blend-mode: screen;
       pointer-events: none;
     }
     .overlay-topbar {
       position: absolute;
-      top: 18px;
-      left: 18px;
-      right: 18px;
+      top: 20px;
+      left: 22px;
+      right: 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -491,9 +567,10 @@
       flex-wrap: wrap;
     }
     .overlay-btn {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
       font-weight: 600;
+      color: rgba(247, 250, 255, .96);
     }
     .overlay-scene,
     .overlay-copy {
@@ -506,23 +583,65 @@
     }
     .overlay-scene {
       background:
-        radial-gradient(circle at 38% 34%, rgba(255,255,255,.3), transparent 18%),
-        radial-gradient(circle at 50% 60%, rgba(70,215,255,.18), transparent 28%),
-        linear-gradient(180deg, rgba(255, 247, 226, .96), rgba(219, 237, 255, .98));
-      border: 1px solid rgba(123, 104, 177, .1);
-      padding: 70px 26px 26px;
+        radial-gradient(circle at 48% 34%, rgba(255, 210, 116, .18), transparent 16%),
+        radial-gradient(circle at 50% 60%, rgba(70,215,255,.14), transparent 30%),
+        linear-gradient(180deg, rgba(7, 14, 34, .2), rgba(7, 14, 34, .42));
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 96px 32px 32px;
       display: grid;
       align-items: center;
       justify-items: center;
+      min-height: 100%;
+    }
+    .overlay-scene-badge {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(8, 13, 35, 0.68);
+      border: 1px solid rgba(171, 214, 255, 0.16);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+      color: #f8fbff;
+    }
+    .overlay-scene-pulse {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff 0%, #ffd67d 48%, rgba(255,214,125,0) 76%);
+      box-shadow: 0 0 0 10px rgba(255, 214, 125, 0.12), 0 0 30px rgba(255, 214, 125, 0.42);
+      animation: pulseGlow 1.8s ease-in-out infinite;
+      flex: none;
+    }
+    .overlay-scene-badge strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #ffd988;
+      font-size: 12px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .overlay-scene-badge span {
+      display: block;
+      color: rgba(245, 249, 255, 0.96);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 700;
     }
     .overlay-scene-bg {
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.06), transparent 24%),
-        conic-gradient(from 0deg, rgba(255,255,255,.04), transparent 28%, rgba(255,255,255,.03), transparent 65%, rgba(255,255,255,.06));
-      opacity: .65;
-      animation: spinOnly 16s linear infinite;
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.1), transparent 22%),
+        radial-gradient(circle at 50% 52%, rgba(74, 161, 255, .12), transparent 30%),
+        conic-gradient(from 0deg, rgba(255,255,255,.05), transparent 28%, rgba(110, 199, 255, .04), transparent 65%, rgba(255,255,255,.05));
+      opacity: .88;
+      animation: spinOnly 18s linear infinite;
     }
     .overlay-orbit,
     .overlay-orbit::before,
@@ -530,8 +649,8 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      width: min(68vmin, 430px);
-      height: min(68vmin, 430px);
+      width: min(92vmin, 840px);
+      height: min(92vmin, 840px);
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,.08);
       transform: translate(-50%, -50%);
@@ -543,28 +662,30 @@
     }
     .overlay-orbit::before {
       inset: 10%;
-      border-color: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.05);
     }
     .overlay-orbit::after {
       inset: -10%;
-      border-color: rgba(70,215,255,.08);
+      border-color: rgba(70,215,255,.09);
     }
     .overlay-body-wrap {
       position: relative;
-      width: min(52vmin, 320px);
-      height: min(52vmin, 320px);
+      width: min(72vmin, 640px);
+      height: min(72vmin, 640px);
       display: grid;
       place-items: center;
-      animation: floatStage 4.8s ease-in-out infinite;
+      animation: floatStage 5.8s ease-in-out infinite;
       z-index: 1;
+      filter: drop-shadow(0 40px 110px rgba(0, 0, 0, .52));
     }
     .overlay-3d {
       position: absolute;
-      inset: -12%;
+      inset: -18%;
       border-radius: 50%;
       overflow: hidden;
       opacity: 0;
-      transition: opacity .22s ease;
+      transition: opacity .22s ease, transform .55s cubic-bezier(.2, .8, .18, 1);
+      transform: scale(.92);
     }
     .overlay-3d canvas {
       display: block;
@@ -573,6 +694,7 @@
     }
     .overlay-scene.has-three .overlay-3d {
       opacity: 1;
+      transform: scale(1);
     }
     .overlay-scene.has-three .overlay-beam,
     .overlay-scene.has-three .overlay-body,
@@ -581,13 +703,13 @@
     }
     .overlay-beam {
       position: absolute;
-      inset: -14%;
+      inset: -22%;
       border-radius: 50%;
       background:
         conic-gradient(from 0deg, transparent 0 10%, rgba(255,255,255,.10) 16%, transparent 22%, rgba(255,177,92,.22) 33%, transparent 44%, rgba(70,215,255,.18) 58%, transparent 72%, rgba(255,255,255,.12) 84%, transparent 100%);
-      filter: blur(10px);
+      filter: blur(18px);
       animation: beamSweep 12s linear infinite;
-      opacity: .6;
+      opacity: .78;
     }
     .overlay-body {
       position: relative;
@@ -664,21 +786,66 @@
     .spark-2 { top: 26%; right: 16%; animation-delay: .8s; }
     .spark-3 { right: 24%; bottom: 18%; animation-delay: 1.6s; }
     .spark-4 { bottom: 24%; left: 16%; animation-delay: 2.2s; }
+    .overlay-entry {
+      position: absolute;
+      left: 24px;
+      bottom: 24px;
+      z-index: 2;
+      max-width: 360px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255, 202, 106, 0.18), rgba(91, 189, 255, 0.12));
+      border: 1px solid rgba(171, 214, 255, 0.14);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .45s ease, transform .45s ease;
+      color: #f8fbff;
+    }
+    .overlay.open .overlay-entry {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .overlay-entry strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #ffe39e;
+      font-size: 12px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .overlay-entry p {
+      margin: 0;
+      color: rgba(232, 240, 255, 0.9);
+      font-size: 14px;
+      line-height: 1.55;
+      font-weight: 600;
+    }
 
     .overlay-copy {
-      background: linear-gradient(180deg, rgba(255, 252, 247, .92), rgba(245, 249, 255, .96));
-      border: 1px solid rgba(123, 104, 177, .1);
-      padding: 78px 26px 26px;
+      align-self: end;
+      justify-self: end;
+      width: min(100%, 430px);
+      margin: 92px 0 0;
+      margin-left: 18px;
+      background: linear-gradient(180deg, rgba(252, 253, 255, .94), rgba(242, 246, 255, .88));
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 20px 60px rgba(3, 8, 24, .32);
+      backdrop-filter: blur(18px) saturate(118%);
+      -webkit-backdrop-filter: blur(18px) saturate(118%);
+      padding: 22px 22px 18px;
       display: grid;
       grid-template-rows: auto auto minmax(0, 1fr);
-      gap: 18px;
+      gap: 12px;
+      z-index: 2;
     }
     .overlay-copy-scroll {
       min-height: 0;
       overflow: auto;
       padding-right: 4px;
       display: grid;
-      gap: 18px;
+      gap: 14px;
       align-content: start;
     }
     .overlay-kicker {
@@ -688,35 +855,40 @@
       padding: 8px 12px;
       border-radius: 999px;
       background: rgba(255,255,255,.76);
-      color: var(--muted);
-      border: 1px solid rgba(123, 104, 177, .14);
+      color: #453b74;
+      border: 1px solid rgba(108, 87, 171, .14);
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: .16em;
+      font-weight: 800;
     }
     .overlay-heading h2 {
-      margin: 10px 0 0;
-      font-size: clamp(34px, 4vw, 58px);
+      margin: 8px 0 0;
+      font-size: clamp(32px, 3.5vw, 52px);
       line-height: .96;
+      color: #101f46;
     }
     .overlay-meta {
-      margin-top: 12px;
-      color: var(--muted);
+      margin-top: 10px;
+      color: rgba(46, 59, 108, .9);
       font-size: 15px;
       line-height: 1.5;
+      font-weight: 700;
     }
     .overlay-story {
       margin: 0;
-      font-size: clamp(16px, 2vw, 20px);
-      line-height: 1.7;
-      color: #43376d;
-      max-width: 56ch;
+      font-size: clamp(16px, 1.3vw, 19px);
+      line-height: 1.68;
+      color: #1f2f63;
+      max-width: 38ch;
+      font-weight: 600;
     }
     .overlay-story-note {
-      margin: -6px 0 0;
-      color: var(--muted);
+      margin: -2px 0 0;
+      color: rgba(68, 83, 128, .84);
       font-size: 13px;
       line-height: 1.5;
+      font-weight: 600;
     }
     .narration-controls {
       display: flex;
@@ -724,25 +896,26 @@
       gap: 10px;
     }
     .narration-btn {
-      background: rgba(255,255,255,.68);
-      border: 1px solid rgba(123, 104, 177, .14);
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(108, 87, 171, .14);
       font-weight: 600;
     }
     .narration-status {
-      color: var(--muted);
-      font-size: 13px;
+      color: #4c4575;
+      font-size: 14px;
       line-height: 1.5;
+      font-weight: 600;
     }
     .overlay-facts {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: 1fr;
+      gap: 10px;
     }
     .overlay-fact {
-      padding: 14px 14px 15px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.7);
-      border: 1px solid rgba(123, 104, 177, .12);
+      padding: 12px 13px 13px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.84);
+      border: 1px solid rgba(115, 139, 205, .12);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
     }
     .overlay-fact strong {
@@ -752,11 +925,14 @@
       margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: .08em;
+      font-weight: 800;
     }
     .overlay-fact span {
       display: block;
       font-size: 15px;
       line-height: 1.45;
+      color: #1f1a46;
+      font-weight: 700;
     }
 
     @media (max-width: 1080px) {
@@ -765,38 +941,71 @@
         height: auto;
         min-height: 100vh;
         grid-template-columns: 1fr;
-        grid-template-rows: auto minmax(420px, 64vh) auto auto auto;
+        grid-template-rows: auto minmax(500px, 68vh) auto auto auto;
         grid-template-areas: "top" "map" "detail" "side" "filters";
       }
       .sidebar { max-height: 420px; }
       .detail-panel { grid-template-columns: 88px 1fr; }
       .detail-facts { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .overlay-shell {
-        height: min(92vh, 980px);
+        width: min(100vw - 20px, 1200px);
+        height: min(100vh - 20px, 1100px);
         grid-template-columns: 1fr;
-        grid-template-rows: minmax(300px, 40vh) minmax(0, 1fr);
+        grid-template-rows: minmax(360px, 58vh) minmax(0, 1fr);
       }
-      .overlay-copy { padding-top: 28px; }
-      .overlay-scene { padding-top: 84px; }
+      .overlay-scene { padding-top: 92px; }
+      .overlay-copy {
+        width: 100%;
+        margin: 0;
+        border-radius: 24px;
+      }
     }
     @media (max-width: 640px) {
       .app { padding: 12px; gap: 12px; }
       .topbar { flex-direction: column; align-items: flex-start; }
       .stat-row { justify-content: flex-start; }
+      .subtitle,
+      .side-head p,
+      .detail-copy p,
+      .map-caption p,
+      .overlay-meta,
+      .overlay-story,
+      .overlay-story-note,
+      .narration-status,
+      .scene-banner span,
+      .overlay-entry p {
+        font-size: 16px;
+      }
+      .pill,
+      .search,
+      .detail-action,
+      .overlay-btn,
+      .narration-btn,
+      .mode-btn,
+      .music-btn,
+      .chip {
+        font-size: 15px;
+      }
       .detail-panel { grid-template-columns: 1fr; }
       .planet-hero { width: 88px; height: 88px; }
       .detail-facts { grid-template-columns: 1fr; }
       .filters { padding-bottom: 24px; }
       .controls { position: static; margin: 12px; }
+      .scene-banner {
+        left: 12px;
+        right: 12px;
+        top: 12px;
+        max-width: none;
+      }
       .map-caption { right: 12px; left: 12px; bottom: 12px; max-width: none; }
       .detail-copy-actions { flex-direction: column; align-items: stretch; }
       .detail-action { width: 100%; }
       .overlay { padding: 10px; }
       .overlay-shell {
-        height: calc(100vh - 20px);
-        padding: 14px;
-        gap: 12px;
-        border-radius: 24px;
+        width: calc(100vw - 10px);
+        height: calc(100vh - 10px);
+        padding: 12px;
+        border-radius: 26px;
       }
       .overlay-topbar {
         top: 14px;
@@ -807,12 +1016,23 @@
       .overlay-topbar-right { gap: 8px; }
       .overlay-btn { padding: 10px 12px; }
       .overlay-icon-btn { width: 42px; height: 42px; }
-      .overlay-scene { padding: 76px 14px 18px; }
+      .overlay-scene { padding: 88px 12px 14px; }
       .overlay-copy { padding: 18px 14px 14px; }
       .overlay-heading h2 { font-size: clamp(28px, 9vw, 42px); }
-      .overlay-facts { grid-template-columns: 1fr; }
       .narration-controls { display: grid; grid-template-columns: 1fr 1fr; }
       .narration-btn { width: 100%; }
+      .overlay-scene-badge,
+      .overlay-entry {
+        left: 12px;
+        right: 12px;
+        max-width: none;
+      }
+      .overlay-scene-badge { top: 12px; }
+      .overlay-entry { bottom: 12px; }
+      .overlay-body-wrap {
+        width: min(90vw, 540px);
+        height: min(90vw, 540px);
+      }
     }
   </style>
 </head>
@@ -853,6 +1073,10 @@
       <div class="map-stage">
         <div class="orbit-grid"></div>
         <div class="map-vignette"></div>
+        <div class="scene-banner">
+          <strong id="sceneBannerLabel">3D Mission</strong>
+          <span id="sceneBannerText">Tap any glowing world to launch its immersive Three.js scene.</span>
+        </div>
         <svg id="universe" viewBox="0 0 1000 680" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
       <div class="map-caption glass">
@@ -896,7 +1120,7 @@
 
   <section class="overlay" id="detailOverlay" aria-hidden="true">
     <div class="overlay-backdrop" id="overlayBackdrop"></div>
-    <div class="overlay-shell glass" id="overlayShell">
+    <div class="overlay-shell glass" id="overlayShell" tabindex="-1">
       <div class="overlay-topbar">
         <div class="overlay-topbar-left">
           <button class="overlay-btn" id="overlayBackBtn">← Back to map</button>
@@ -910,6 +1134,13 @@
 
       <div class="overlay-scene" id="overlayScene">
         <div class="overlay-scene-bg"></div>
+        <div class="overlay-scene-badge">
+          <span class="overlay-scene-pulse" aria-hidden="true"></span>
+          <div>
+            <strong id="overlaySceneBadgeLabel">3D Scene Live</strong>
+            <span id="overlaySceneBadgeText">Rotating planet model powered by Three.js</span>
+          </div>
+        </div>
         <div class="overlay-orbit"></div>
         <div class="overlay-body-wrap">
           <div class="overlay-3d" id="overlayThreeStage" aria-hidden="true"></div>
@@ -920,6 +1151,10 @@
           <span class="overlay-spark spark-2"></span>
           <span class="overlay-spark spark-3"></span>
           <span class="overlay-spark spark-4"></span>
+        </div>
+        <div class="overlay-entry">
+          <strong id="overlayEntryLabel">Scene Entry</strong>
+          <p id="overlayEntryText">You’re inside the planet chamber now. Drag, orbit, and let the narration begin.</p>
         </div>
       </div>
 
@@ -1839,6 +2074,7 @@
     const overlayFacts = document.getElementById('overlayFacts');
     const overlayScene = document.getElementById('overlayScene');
     const overlayThreeStage = document.getElementById('overlayThreeStage');
+    const overlaySceneBg = document.querySelector('.overlay-scene-bg');
     const overlayBody = document.getElementById('overlayBody');
     const overlayRing = document.getElementById('overlayRing');
     const overlayReplayBtn = document.getElementById('overlayReplayBtn');
@@ -1883,6 +2119,7 @@
       resizeHandler: null,
       currentWorldId: null
     };
+    let overlayFocusTimer = 0;
 
     function hexToRgb(hex) {
       const value = hex.replace('#', '');
@@ -1954,8 +2191,8 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-      camera.position.set(0, 0.2, 7.2);
+      const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+      camera.position.set(0, 0.12, 6.4);
 
       const root = new THREE.Group();
       scene.add(root);
@@ -1973,7 +2210,7 @@
       const starGeometry = new THREE.BufferGeometry();
       const starPositions = new Float32Array(600 * 3);
       for (let i = 0; i < 600; i += 1) {
-        const radius = 10 + Math.random() * 12;
+        const radius = 10 + Math.random() * 18;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos((Math.random() * 2) - 1);
         const index = i * 3;
@@ -1986,9 +2223,9 @@
         starGeometry,
         new THREE.PointsMaterial({
           color: 0xffffff,
-          size: 0.045,
+          size: 0.05,
           transparent: true,
-          opacity: 0.9
+          opacity: 0.92
         })
       );
       scene.add(starField);
@@ -2046,9 +2283,9 @@
       }
 
       const group = new THREE.Group();
-      group.rotation.z = world.special === 'sun' ? 0.1 : -0.18;
+      group.rotation.z = world.special === 'sun' ? 0.08 : -0.14;
 
-      const geometry = new THREE.SphereGeometry(world.special === 'sun' ? 1.56 : 1.48, 64, 64);
+      const geometry = new THREE.SphereGeometry(world.special === 'sun' ? 1.82 : 1.72, 84, 84);
       const material = world.special === 'sun'
         ? new THREE.MeshStandardMaterial({
             color: new THREE.Color(world.color),
@@ -2069,11 +2306,11 @@
       group.add(sphere);
 
       const atmosphere = new THREE.Mesh(
-        new THREE.SphereGeometry(world.special === 'sun' ? 1.84 : 1.68, 48, 48),
+        new THREE.SphereGeometry(world.special === 'sun' ? 2.12 : 1.96, 60, 60),
         new THREE.MeshBasicMaterial({
           color: new THREE.Color(world.color),
           transparent: true,
-          opacity: world.special === 'sun' ? 0.16 : 0.09,
+          opacity: world.special === 'sun' ? 0.2 : 0.1,
           side: THREE.BackSide
         })
       );
@@ -2082,19 +2319,19 @@
       const glowShells = [];
       if (world.special === 'sun') {
         const warmGlow = new THREE.Mesh(
-          new THREE.SphereGeometry(2.1, 40, 40),
+          new THREE.SphereGeometry(2.42, 48, 48),
           new THREE.MeshBasicMaterial({
             color: new THREE.Color('#ffd46d'),
             transparent: true,
-            opacity: 0.16
+            opacity: 0.18
           })
         );
         const outerGlow = new THREE.Mesh(
-          new THREE.SphereGeometry(2.5, 32, 32),
+          new THREE.SphereGeometry(2.96, 36, 36),
           new THREE.MeshBasicMaterial({
             color: new THREE.Color('#ff9b47'),
             transparent: true,
-            opacity: 0.08
+            opacity: 0.09
           })
         );
         group.add(warmGlow, outerGlow);
@@ -2111,7 +2348,7 @@
           side: THREE.DoubleSide,
           depthWrite: false
         });
-        ringMesh = new THREE.Mesh(new THREE.RingGeometry(2.05, 3.15, 128), ringMaterial);
+        ringMesh = new THREE.Mesh(new THREE.RingGeometry(2.3, 3.7, 128), ringMaterial);
         ringMesh.rotation.x = -1.16;
         ringMesh.rotation.z = -0.28;
         group.add(ringMesh);
@@ -2176,6 +2413,10 @@
       threeState.sunLight.color.set(isSun ? '#ffb85c' : world.color);
       threeState.sunLight.intensity = isSun ? 5.6 : 0.85;
       threeState.sunLight.distance = isSun ? 22 : 15;
+      threeState.camera.fov = isSun ? 32 : 28;
+      threeState.camera.position.z = isSun ? 6.8 : 5.75;
+      threeState.camera.position.y = isSun ? 0.2 : 0.08;
+      threeState.camera.updateProjectionMatrix();
 
       if (!threeState.animationId) animateThreeScene();
     }
@@ -2546,8 +2787,11 @@
 
     function selectWorld(id, shouldOpenOverlay = false) {
       state.activeId = id;
+      if (shouldOpenOverlay) {
+        openOverlay(id);
+        return;
+      }
       render();
-      if (shouldOpenOverlay) openOverlay(id);
     }
 
     function renderMap(filtered) {
@@ -2688,6 +2932,16 @@
       overlayModeBadge.textContent = modeBadgeText();
       overlayName.textContent = labelByLang(active.name, active.zh);
       overlayMeta.textContent = `${labelByLang(active.type, active.typeZh)} · ${labelByLang(active.system, active.systemZh)} · ${labelByLang(active.temp, active.tempZh)} · ${labelByLang(active.habitability, active.habitabilityZh)}`;
+      document.getElementById('overlaySceneBadgeLabel').textContent = labelByLang('3D Scene Live', '3D 场景已启动');
+      document.getElementById('overlaySceneBadgeText').textContent = labelByLang(
+        'Rotating planet model powered by Three.js',
+        '由 Three.js 驱动的旋转星球模型'
+      );
+      document.getElementById('overlayEntryLabel').textContent = labelByLang('Scene Entry', '场景入口');
+      document.getElementById('overlayEntryText').textContent = labelByLang(
+        'You’re inside the planet chamber now. Drag, orbit, and let the narration begin.',
+        '你已经进入星球舱室。拖动、环绕观看，然后让讲述开始。'
+      );
       overlayStory.textContent = storyForWorld(active);
       overlayStoryNote.textContent = speechSupported
         ? labelByLang('Narration starts automatically when this screen opens.', '打开后会自动开始朗读。')
@@ -2697,6 +2951,17 @@
       overlayBody.style.setProperty('--hero-glow', active.glow);
       overlayScene.style.setProperty('--spot-x', `${Math.max(18, Math.min(78, (active.x / 1000) * 100))}%`);
       overlayScene.style.setProperty('--spot-y', `${Math.max(18, Math.min(82, (active.y / 680) * 100))}%`);
+      overlaySceneBg.style.background = `
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.12), transparent 22%),
+        radial-gradient(circle at 50% 52%, ${withAlpha(active.color, 0.18)}, transparent 30%),
+        radial-gradient(circle at 50% 50%, ${withAlpha(active.color, 0.12)}, transparent 44%),
+        conic-gradient(from 0deg, rgba(255,255,255,.05), transparent 28%, ${withAlpha(active.color, 0.08)}, transparent 65%, rgba(255,255,255,.05))
+      `;
+      overlayShell.style.background = `
+        radial-gradient(circle at 12% 14%, rgba(255,255,255,.08), transparent 20%),
+        radial-gradient(circle at 82% 18%, ${withAlpha(active.color, 0.08)}, transparent 22%),
+        linear-gradient(160deg, rgba(9, 18, 40, .98), rgba(13, 24, 55, .96) 42%, rgba(8, 13, 32, .98))
+      `;
 
       overlayBody.className = `overlay-body ${active.special === 'sun' ? 'sun' : ''}`;
       overlayBody.style.background = `
@@ -2728,15 +2993,25 @@
       state.activeId = id;
       state.overlayOpen = true;
       const active = getActiveWorld();
+      if (overlayFocusTimer) window.clearTimeout(overlayFocusTimer);
+      document.body.classList.add('overlay-active');
       detailOverlay.classList.add('open');
       detailOverlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       render();
+      overlayFocusTimer = window.setTimeout(() => {
+        overlayShell.focus();
+      }, 60);
       playNarration(active);
     }
 
     function closeOverlay() {
       state.overlayOpen = false;
+      if (overlayFocusTimer) {
+        window.clearTimeout(overlayFocusTimer);
+        overlayFocusTimer = 0;
+      }
+      document.body.classList.remove('overlay-active');
       detailOverlay.classList.remove('open');
       detailOverlay.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = window.innerWidth <= 1080 ? 'auto' : 'hidden';
@@ -2773,6 +3048,11 @@
       document.getElementById('finderText').textContent = labelByLang(
         'Filter by planet type, warmth, habitability, or star system. Tap any card to focus the map and open its story.',
         '按行星类型、温度、宜居度和星系筛选，点卡片即可聚焦地图并打开故事。'
+      );
+      document.getElementById('sceneBannerLabel').textContent = labelByLang('3D Mission', '3D 任务');
+      document.getElementById('sceneBannerText').textContent = labelByLang(
+        'Tap any glowing world to launch its immersive Three.js scene.',
+        '点击任意发光世界，立刻进入它的 Three.js 沉浸场景。'
       );
       document.getElementById('languageLabel').textContent = labelByLang('Language', '语言');
       document.getElementById('typeFilterLabel').textContent = labelByLang('Type', '类型');
