@@ -3,31 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Universe of Planets 宇宙行星图</title>
-  <meta name="description" content="A bilingual interactive universe of planets for kids and astrophysics-curious explorers, with an atmospheric music track and narrated immersive planet stories." />
+  <title>Universe of Planets</title>
+  <meta name="description" content="A playful interactive universe of planets for kids and curious explorers, with browser-generated music and narrated immersive planet stories." />
   <style>
     :root {
-      --bg: #060816;
-      --panel: rgba(13, 18, 40, 0.74);
-      --panel-strong: rgba(8, 12, 28, 0.9);
-      --line: rgba(255,255,255,0.09);
-      --text: #edf4ff;
-      --muted: #99a9c8;
-      --accent: #8b7cff;
-      --accent-2: #46d7ff;
-      --accent-3: #ffb15c;
-      --shadow: 0 20px 60px rgba(0,0,0,0.45);
-      --radius: 24px;
-      --hero-color: #f4d9a0;
-      --hero-glow: rgba(244,217,160,.5);
+      --bg: #fff7ea;
+      --bg-deep: #fde8ff;
+      --panel: rgba(255, 255, 255, 0.7);
+      --panel-strong: rgba(255, 251, 245, 0.9);
+      --line: rgba(136, 116, 193, 0.16);
+      --text: #2f2757;
+      --muted: #756d95;
+      --accent: #ff7fb2;
+      --accent-2: #5bbdff;
+      --accent-3: #ffbf69;
+      --accent-4: #8cda8f;
+      --shadow: 0 22px 60px rgba(109, 88, 163, 0.18);
+      --radius: 28px;
+      --hero-color: #ffd27e;
+      --hero-glow: rgba(255, 201, 116, 0.52);
+      --button-text: #3b2f68;
     }
 
     * { box-sizing: border-box; }
     html, body {
       margin: 0;
       height: 100%;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #131b44 0%, #090d20 34%, #04050b 100%);
+      font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 14% 16%, rgba(255, 207, 110, 0.75), transparent 24%),
+        radial-gradient(circle at 84% 12%, rgba(122, 219, 255, 0.7), transparent 24%),
+        radial-gradient(circle at 50% 78%, rgba(255, 163, 218, 0.6), transparent 28%),
+        linear-gradient(180deg, #fff6dd 0%, #ffeaf8 48%, #e7f4ff 100%);
       color: var(--text);
       overflow: hidden;
     }
@@ -37,9 +44,9 @@
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 20% 20%, rgba(130, 100, 255, 0.18), transparent 20%),
-        radial-gradient(circle at 80% 15%, rgba(70, 215, 255, 0.12), transparent 18%),
-        radial-gradient(circle at 50% 90%, rgba(255, 177, 92, 0.10), transparent 18%);
+        radial-gradient(circle at 20% 20%, rgba(255, 160, 205, 0.24), transparent 20%),
+        radial-gradient(circle at 80% 15%, rgba(91, 189, 255, 0.18), transparent 18%),
+        radial-gradient(circle at 50% 90%, rgba(255, 191, 105, 0.18), transparent 18%);
     }
 
     .stars, .stars::before, .stars::after {
@@ -55,10 +62,10 @@
         radial-gradient(2px 2px at 300px 50px, rgba(139,124,255,.8), transparent);
       background-size: 320px 220px;
       animation: drift 80s linear infinite;
-      opacity: .55;
+      opacity: .48;
     }
-    .stars::before { transform: scale(1.3); opacity: .35; animation-duration: 120s; }
-    .stars::after { transform: scale(1.7); opacity: .2; animation-duration: 180s; }
+    .stars::before { transform: scale(1.3); opacity: .28; animation-duration: 120s; }
+    .stars::after { transform: scale(1.7); opacity: .16; animation-duration: 180s; }
 
     @keyframes drift {
       from { transform: translate3d(0, 0, 0); }
@@ -129,15 +136,15 @@
       padding: 16px 18px;
     }
     .title-wrap { display: flex; flex-direction: column; gap: 6px; }
-    .eyebrow { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--accent-2); }
+    .eyebrow { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: #3a95d8; font-weight: 700; }
     h1 { margin: 0; font-size: clamp(24px, 4vw, 42px); line-height: 1.05; }
     .subtitle { color: var(--muted); font-size: 14px; max-width: 760px; line-height: 1.5; }
     .stat-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
     .pill {
       padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.56);
+      border: 1px solid rgba(124, 105, 182, 0.16);
       color: var(--muted);
       font-size: 13px;
     }
@@ -155,19 +162,19 @@
       overflow: hidden;
       border-radius: inherit;
       background:
-        radial-gradient(circle at 50% 48%, rgba(27, 35, 74, 0.95) 0%, rgba(8, 10, 24, 0.98) 54%, #04050b 100%),
-        linear-gradient(135deg, rgba(255,255,255,.03), transparent 40%);
+        radial-gradient(circle at 50% 48%, rgba(255, 248, 225, 0.96) 0%, rgba(234, 241, 255, 0.95) 48%, rgba(213, 233, 255, 0.92) 100%),
+        linear-gradient(135deg, rgba(255,255,255,.3), transparent 40%);
     }
     .orbit-grid {
       position: absolute;
       inset: 5% 4%;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid rgba(132, 159, 227, 0.26);
       box-shadow:
-        0 0 0 80px rgba(255,255,255,0.02),
-        0 0 0 160px rgba(255,255,255,0.015),
-        0 0 0 240px rgba(255,255,255,0.01);
-      opacity: .65;
+        0 0 0 80px rgba(123, 158, 232, 0.08),
+        0 0 0 160px rgba(123, 158, 232, 0.06),
+        0 0 0 240px rgba(123, 158, 232, 0.04);
+      opacity: .8;
       pointer-events: none;
     }
     .map-vignette {
@@ -175,9 +182,9 @@
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 20% 25%, rgba(255,180,90,.10), transparent 22%),
-        radial-gradient(circle at 75% 30%, rgba(70,215,255,.10), transparent 20%),
-        linear-gradient(180deg, transparent, rgba(0,0,0,.28));
+        radial-gradient(circle at 20% 25%, rgba(255,180,90,.18), transparent 22%),
+        radial-gradient(circle at 75% 30%, rgba(70,215,255,.16), transparent 20%),
+        linear-gradient(180deg, transparent, rgba(255,255,255,.1));
     }
     svg#universe { position: absolute; inset: 0; width: 100%; height: 100%; }
     .node {
@@ -194,17 +201,17 @@
     .node:hover .planet-core { transform: scale(1.07); }
     .planet-label {
       font-size: 13px;
-      fill: rgba(237,244,255,.92);
+      fill: rgba(56, 44, 104, .92);
       font-weight: 700;
       paint-order: stroke;
-      stroke: rgba(5,8,20,.9);
-      stroke-width: 4px;
+      stroke: rgba(255, 251, 244, .96);
+      stroke-width: 5px;
       stroke-linejoin: round;
     }
-    .planet-sub { font-size: 11px; fill: rgba(153,169,200,.95); }
-    .link-line { stroke: rgba(115, 145, 255, 0.28); stroke-width: 1.2; stroke-dasharray: 5 8; opacity: .65; }
+    .planet-sub { font-size: 11px; fill: rgba(104, 112, 164, .95); }
+    .link-line { stroke: rgba(115, 145, 255, 0.4); stroke-width: 1.4; stroke-dasharray: 5 8; opacity: .78; }
     .sun-ray {
-      stroke: rgba(255, 196, 92, .65);
+      stroke: rgba(255, 196, 92, .72);
       stroke-width: 2.2;
       stroke-linecap: round;
       opacity: .82;
@@ -220,17 +227,37 @@
       flex-wrap: wrap;
       z-index: 2;
     }
-    .mode-toggle, .lang-toggle, .music-toggle {
+    .mode-toggle, .music-toggle, .language-select {
       display: inline-flex;
       gap: 6px;
       padding: 6px;
       border-radius: 999px;
-      background: rgba(9, 14, 30, 0.74);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(123, 104, 177, 0.14);
     }
-    .mode-btn, .lang-btn, .music-btn, .chip, .detail-action, .overlay-btn, .narration-btn, .overlay-icon-btn {
+    .language-select {
+      align-items: center;
+      padding: 6px 10px 6px 14px;
+    }
+    .language-select label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+    }
+    .language-select select {
       border: none;
-      color: var(--text);
+      outline: none;
+      background: transparent;
+      color: var(--button-text);
+      font-size: 13px;
+      font-weight: 700;
+      padding-right: 8px;
+    }
+    .mode-btn, .music-btn, .chip, .detail-action, .overlay-btn, .narration-btn, .overlay-icon-btn {
+      border: none;
+      color: var(--button-text);
       background: transparent;
       cursor: pointer;
       border-radius: 999px;
@@ -238,17 +265,17 @@
       font-size: 13px;
       transition: .2s ease;
     }
-    .mode-btn.active, .lang-btn.active, .music-btn.active, .chip.active, .detail-action.primary, .overlay-btn.primary, .narration-btn.active {
-      background: linear-gradient(135deg, rgba(139,124,255,.95), rgba(70,215,255,.9));
+    .mode-btn.active, .music-btn.active, .chip.active, .detail-action.primary, .overlay-btn.primary, .narration-btn.active {
+      background: linear-gradient(135deg, rgba(255,127,178,.96), rgba(91,189,255,.92));
       color: white;
-      box-shadow: 0 8px 24px rgba(90,100,255,0.38);
+      box-shadow: 0 10px 26px rgba(120, 123, 223, 0.28);
     }
     .overlay-icon-btn {
       width: 46px;
       height: 46px;
       padding: 0;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(123, 104, 177, 0.14);
       font-size: 18px;
       display: inline-flex;
       align-items: center;
@@ -259,7 +286,7 @@
     .overlay-btn:hover,
     .narration-btn:hover {
       transform: translateY(-1px);
-      background: rgba(255,255,255,.12);
+      background: rgba(255,255,255,.82);
     }
 
     .map-caption {
@@ -288,8 +315,8 @@
       width: 100%;
       padding: 12px 14px;
       border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(123, 104, 177, 0.14);
+      background: rgba(255,255,255,.64);
       color: var(--text);
       outline: none;
     }
@@ -297,15 +324,15 @@
     .world-card {
       padding: 12px;
       border-radius: 18px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.52);
+      border: 1px solid rgba(123, 104, 177, 0.12);
       cursor: pointer;
       transition: .2s ease;
     }
     .world-card:hover, .world-card.active {
       transform: translateY(-1px);
-      border-color: rgba(139,124,255,.52);
-      background: rgba(139,124,255,0.1);
+      border-color: rgba(255,127,178,.4);
+      background: linear-gradient(135deg, rgba(255,239,248,.96), rgba(235,246,255,.92));
     }
     .world-card-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
     .world-card h3 { margin: 0; font-size: 15px; }
@@ -314,7 +341,7 @@
     .tag {
       padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(255,255,255,.06);
+      background: rgba(255,255,255,.72);
       color: var(--muted);
       font-size: 11px;
     }
@@ -332,9 +359,9 @@
       height: 112px;
       border-radius: 50%;
       position: relative;
-      box-shadow: inset -18px -18px 40px rgba(0,0,0,.35), 0 0 50px rgba(139,124,255,.35);
+      box-shadow: inset -18px -18px 40px rgba(118,88,25,.18), 0 0 50px rgba(255,127,178,.22);
       animation: floatStage 4s ease-in-out infinite;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), var(--hero-color) 42%, rgba(0,0,0,.82) 100%);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), var(--hero-color) 42%, rgba(130,89,32,.92) 100%);
     }
     .planet-hero::before,
     .planet-hero::after {
@@ -361,18 +388,18 @@
     }
     .detail-copy h2 { margin: 0; font-size: clamp(24px, 3vw, 32px); }
     .detail-copy .meta { margin-top: 8px; color: var(--muted); font-size: 14px; }
-    .detail-copy p { margin: 12px 0 0; color: #dbe7ff; line-height: 1.65; font-size: 14px; }
+    .detail-copy p { margin: 12px 0 0; color: #483d70; line-height: 1.65; font-size: 14px; }
     .detail-copy-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
     .detail-action {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.64);
+      border: 1px solid rgba(123, 104, 177, 0.14);
     }
     .detail-facts { display: grid; gap: 8px; }
     .fact-box {
       padding: 10px 12px;
       border-radius: 16px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(123, 104, 177, 0.12);
     }
     .fact-box strong { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
     .fact-box span { font-size: 14px; color: var(--text); }
@@ -388,8 +415,8 @@
     .filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .filter-group label { font-size: 12px; text-transform: uppercase; letter-spacing: .18em; color: var(--muted); }
     .chip {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.58);
+      border: 1px solid rgba(123, 104, 177, 0.14);
       color: var(--muted);
       padding: 9px 12px;
     }
@@ -414,9 +441,9 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 20% 20%, rgba(255,173,88,.18), transparent 20%),
-        radial-gradient(circle at 80% 18%, rgba(70,215,255,.16), transparent 20%),
-        linear-gradient(180deg, rgba(3,5,16,.25), rgba(3,5,16,.9));
+        radial-gradient(circle at 20% 20%, rgba(255,173,88,.24), transparent 20%),
+        radial-gradient(circle at 80% 18%, rgba(70,215,255,.22), transparent 20%),
+        linear-gradient(180deg, rgba(255,248,238,.24), rgba(168, 174, 228, .56));
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
@@ -431,9 +458,9 @@
       border-radius: 34px;
       border: 1px solid rgba(255,255,255,.08);
       background:
-        linear-gradient(145deg, rgba(17, 23, 52, .88), rgba(8, 10, 24, .92)),
-        radial-gradient(circle at 16% 16%, rgba(255,255,255,.06), transparent 20%);
-      box-shadow: 0 40px 120px rgba(0,0,0,.55);
+        linear-gradient(145deg, rgba(255, 249, 241, .95), rgba(239, 245, 255, .92)),
+        radial-gradient(circle at 16% 16%, rgba(255,255,255,.6), transparent 20%);
+      box-shadow: 0 36px 110px rgba(123, 112, 181, .24);
       animation: overlayIn .3s ease;
       overflow: hidden;
     }
@@ -479,10 +506,10 @@
     }
     .overlay-scene {
       background:
-        radial-gradient(circle at 38% 34%, rgba(255,255,255,.12), transparent 18%),
-        radial-gradient(circle at 50% 60%, rgba(70,215,255,.12), transparent 28%),
-        linear-gradient(180deg, rgba(4, 8, 26, .92), rgba(5, 6, 14, .98));
-      border: 1px solid rgba(255,255,255,.06);
+        radial-gradient(circle at 38% 34%, rgba(255,255,255,.3), transparent 18%),
+        radial-gradient(circle at 50% 60%, rgba(70,215,255,.18), transparent 28%),
+        linear-gradient(180deg, rgba(255, 247, 226, .96), rgba(219, 237, 255, .98));
+      border: 1px solid rgba(123, 104, 177, .1);
       padding: 70px 26px 26px;
       display: grid;
       align-items: center;
@@ -639,8 +666,8 @@
     .spark-4 { bottom: 24%; left: 16%; animation-delay: 2.2s; }
 
     .overlay-copy {
-      background: linear-gradient(180deg, rgba(8, 12, 28, .82), rgba(7, 10, 23, .96));
-      border: 1px solid rgba(255,255,255,.06);
+      background: linear-gradient(180deg, rgba(255, 252, 247, .92), rgba(245, 249, 255, .96));
+      border: 1px solid rgba(123, 104, 177, .1);
       padding: 78px 26px 26px;
       display: grid;
       grid-template-rows: auto auto minmax(0, 1fr);
@@ -660,9 +687,9 @@
       gap: 8px;
       padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,.05);
+      background: rgba(255,255,255,.76);
       color: var(--muted);
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid rgba(123, 104, 177, .14);
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: .16em;
@@ -682,7 +709,7 @@
       margin: 0;
       font-size: clamp(16px, 2vw, 20px);
       line-height: 1.7;
-      color: #f4f7ff;
+      color: #43376d;
       max-width: 56ch;
     }
     .overlay-story-note {
@@ -697,8 +724,8 @@
       gap: 10px;
     }
     .narration-btn {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.68);
+      border: 1px solid rgba(123, 104, 177, .14);
       font-weight: 600;
     }
     .narration-status {
@@ -714,9 +741,9 @@
     .overlay-fact {
       padding: 14px 14px 15px;
       border-radius: 18px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(123, 104, 177, .12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
     }
     .overlay-fact strong {
       display: block;
@@ -795,30 +822,32 @@
   <div class="app">
     <section class="topbar glass">
       <div class="title-wrap">
-        <div class="eyebrow" id="eyebrowText">Interactive Space Atlas · 双语宇宙地图</div>
-        <h1 id="titleText">Universe of Planets 宇宙行星图</h1>
-        <div class="subtitle" id="subtitleText">A cinematic constellation map for young kids, curious adults, and anyone who wants to wander from the Sun to TRAPPIST-1e without leaving the couch. 给孩子和宇宙爱好者的互动星球探索图。</div>
+        <div class="eyebrow" id="eyebrowText">Storybook Space Atlas</div>
+        <h1 id="titleText">Universe of Planets</h1>
+        <div class="subtitle" id="subtitleText">A bright, magical planet playground for kids, families, and curious explorers who want to drift from the Sun to faraway worlds.</div>
       </div>
       <div class="stat-row">
-        <div class="pill"><strong id="worldCount">18</strong><span id="worldLabel">worlds 世界</span></div>
-        <div class="pill"><strong id="systemCount">8</strong><span id="systemLabel">systems 星系</span></div>
-        <div class="pill"><strong id="modeLabel">Kids</strong><span id="modeSuffix"> mode</span></div>
+        <div class="pill"><strong id="worldCount">18</strong><span id="worldLabel">worlds</span></div>
+        <div class="pill"><strong id="systemCount">8</strong><span id="systemLabel">systems</span></div>
+        <div class="pill"><strong id="modeLabel">Story</strong><span id="modeSuffix"> mode</span></div>
       </div>
     </section>
 
     <section class="map-panel glass">
       <div class="controls">
         <div class="mode-toggle">
-          <button class="mode-btn active" data-mode="kids">🌈 Kids 儿童</button>
-          <button class="mode-btn" data-mode="astro">🔭 Astro 天文</button>
+          <button class="mode-btn active" data-mode="kids">🌈 Story Mode</button>
+          <button class="mode-btn" data-mode="astro">🔭 Science Mode</button>
         </div>
-        <div class="lang-toggle">
-          <button class="lang-btn active" data-lang="both">双语</button>
-          <button class="lang-btn" data-lang="en">EN</button>
-          <button class="lang-btn" data-lang="zh">中文</button>
+        <div class="language-select">
+          <label for="languageSelect" id="languageLabel">Language</label>
+          <select id="languageSelect" aria-label="Language">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+          </select>
         </div>
         <div class="music-toggle">
-          <button class="music-btn" id="musicBtn">🎵 Atmosphere BGM</button>
+          <button class="music-btn" id="musicBtn">🎵 Music On</button>
         </div>
       </div>
       <div class="map-stage">
@@ -827,41 +856,41 @@
         <svg id="universe" viewBox="0 0 1000 680" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
       <div class="map-caption glass">
-        <strong id="captionTitle">Tap a world to begin · 点一个星球开始</strong>
-        <p id="captionText">Each glowing world hides two stories, one simple enough for a child, one rich enough for the astrophysics crowd. 每个发光星球都藏着儿童版和天文版两种讲法。</p>
+        <strong id="captionTitle">Tap a world to begin</strong>
+        <p id="captionText">Each glowing world has a playful story mode and a richer science mode, with one language shown at a time for a cleaner read.</p>
       </div>
     </section>
 
     <aside class="sidebar glass">
       <div class="side-head">
         <div>
-          <h2 id="finderTitle">World Finder 星球导航</h2>
-          <p id="finderText">Filter by planet type, warmth, habitability, or star system. Click any card to focus the universe map. 按类型、温度、宜居度或星系筛选。</p>
+          <h2 id="finderTitle">World Finder</h2>
+          <p id="finderText">Filter by planet type, warmth, habitability, or star system. Tap any card to focus the map and open its story.</p>
         </div>
       </div>
-      <input class="search" id="searchInput" placeholder="Search 搜索 planet, moon, exoplanet, star" />
+      <input class="search" id="searchInput" placeholder="Search planet, moon, exoplanet, star" />
       <div class="world-list" id="worldList"></div>
     </aside>
 
     <section class="detail-panel glass">
       <div class="planet-hero" id="planetHero"></div>
       <div class="detail-copy">
-        <h2 id="detailName">Sun 太阳</h2>
+        <h2 id="detailName">Sun</h2>
         <div class="meta" id="detailMeta">Star · Solar System · Very hot</div>
         <p id="detailStory"></p>
         <div class="detail-copy-actions">
-          <button class="detail-action primary" id="openImmersiveBtn">Open immersive story 打开沉浸故事</button>
-          <button class="detail-action" id="quickNarrateBtn">Narrate now 立即朗读</button>
+          <button class="detail-action primary" id="openImmersiveBtn">Open immersive story</button>
+          <button class="detail-action" id="quickNarrateBtn">Read aloud</button>
         </div>
       </div>
       <div class="detail-facts" id="detailFacts"></div>
     </section>
 
     <section class="filters glass">
-      <div class="filter-group" id="typeFilters"><label>Type 类型</label></div>
-      <div class="filter-group" id="tempFilters"><label>Temperature 温度</label></div>
-      <div class="filter-group" id="habitFilters"><label>Habitability 宜居度</label></div>
-      <div class="filter-group" id="systemFilters"><label>System 星系</label></div>
+      <div class="filter-group" id="typeFilters"><label id="typeFilterLabel">Type</label></div>
+      <div class="filter-group" id="tempFilters"><label id="tempFilterLabel">Temperature</label></div>
+      <div class="filter-group" id="habitFilters"><label id="habitFilterLabel">Habitability</label></div>
+      <div class="filter-group" id="systemFilters"><label id="systemFilterLabel">System</label></div>
     </section>
   </div>
 
@@ -870,11 +899,11 @@
     <div class="overlay-shell glass" id="overlayShell">
       <div class="overlay-topbar">
         <div class="overlay-topbar-left">
-          <button class="overlay-btn" id="overlayBackBtn">← Back to map 返回地图</button>
-          <div class="overlay-kicker" id="overlayKicker">Immersive story · 沉浸故事</div>
+          <button class="overlay-btn" id="overlayBackBtn">← Back to map</button>
+          <div class="overlay-kicker" id="overlayKicker">Immersive story</div>
         </div>
         <div class="overlay-topbar-right">
-          <button class="overlay-btn primary" id="overlayReplayTopBtn">Replay narration 重播</button>
+          <button class="overlay-btn primary" id="overlayReplayTopBtn">Replay narration</button>
           <button class="overlay-icon-btn" id="overlayCloseBtn" aria-label="Close overlay">✕</button>
         </div>
       </div>
@@ -897,27 +926,25 @@
       <div class="overlay-copy">
         <div class="overlay-copy-scroll">
           <div class="overlay-heading">
-            <div class="overlay-kicker" id="overlayModeBadge">Kids mode · 儿童模式</div>
-            <h2 id="overlayName">Sun 太阳</h2>
+            <div class="overlay-kicker" id="overlayModeBadge">Story mode</div>
+            <h2 id="overlayName">Sun</h2>
             <div class="overlay-meta" id="overlayMeta">Star · Solar System · Extreme · Life-giving</div>
           </div>
 
           <p class="overlay-story" id="overlayStory"></p>
-          <p class="overlay-story-note" id="overlayStoryNote">Narration starts automatically when this screen opens. 打开后会自动开始朗读。</p>
+          <p class="overlay-story-note" id="overlayStoryNote">Narration starts automatically when this screen opens.</p>
 
           <div class="narration-controls">
-            <button class="narration-btn active" id="overlayReplayBtn">Replay narration 重播</button>
-            <button class="narration-btn" id="overlayPauseBtn">Pause narration 暂停</button>
+            <button class="narration-btn active" id="overlayReplayBtn">Replay narration</button>
+            <button class="narration-btn" id="overlayPauseBtn">Pause narration</button>
           </div>
-          <div class="narration-status" id="narrationStatus">Narration ready. 朗读准备就绪。</div>
+          <div class="narration-status" id="narrationStatus">Narration ready.</div>
 
           <div class="overlay-facts" id="overlayFacts"></div>
         </div>
       </div>
     </div>
   </section>
-
-  <audio id="bgm" loop preload="none" src="https://cdn.pixabay.com/download/audio/2023/05/16/audio_5f2c86e0af.mp3?filename=space-ambient-146102.mp3"></audio>
 
   <script src="https://unpkg.com/three@0.165.0/build/three.min.js"></script>
   <script>
@@ -1767,7 +1794,7 @@
 
     const state = {
       mode:'kids',
-      lang:'both',
+      lang:'en',
       search:'',
       filters:{ type:'All', temp:'All', habitability:'All', system:'All' },
       activeId:'sun',
@@ -1792,8 +1819,8 @@
     const tempFilters = document.getElementById('tempFilters');
     const habitFilters = document.getElementById('habitFilters');
     const systemFilters = document.getElementById('systemFilters');
+    const languageSelect = document.getElementById('languageSelect');
     const musicBtn = document.getElementById('musicBtn');
-    const bgm = document.getElementById('bgm');
     const openImmersiveBtn = document.getElementById('openImmersiveBtn');
     const quickNarrateBtn = document.getElementById('quickNarrateBtn');
 
@@ -1821,6 +1848,21 @@
     const speechSupported = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
     const hasThree = typeof window.THREE !== 'undefined';
     let narrationQueue = [];
+    let availableVoices = [];
+    let voiceRefreshTimer = 0;
+    const audioState = {
+      context: null,
+      masterGain: null,
+      droneGain: null,
+      melodyGain: null,
+      sparkleGain: null,
+      droneOscillators: [],
+      melodyOscillator: null,
+      melodyFilter: null,
+      sparkleTimer: 0,
+      melodyTimer: 0,
+      started: false
+    };
     const threeState = {
       enabled: false,
       renderer: null,
@@ -2150,47 +2192,30 @@
     }
 
     function labelByLang(en, zh) {
-      if (state.lang === 'en') return en;
-      if (state.lang === 'zh') return zh;
-      return `${en} · ${zh}`;
+      return state.lang === 'zh' ? zh : en;
     }
 
     function worldText(world, keyEn, keyZh) {
-      if (state.lang === 'en') return world[keyEn];
-      if (state.lang === 'zh') return world[keyZh];
-      return `${world[keyEn]} ${world[keyZh]}`;
+      return state.lang === 'zh' ? world[keyZh] : world[keyEn];
     }
 
     function modeLabelText() {
       return state.mode === 'kids'
-        ? (state.lang === 'zh' ? '儿童' : state.lang === 'both' ? 'Kids 儿童' : 'Kids')
-        : (state.lang === 'zh' ? '天文' : state.lang === 'both' ? 'Astro 天文' : 'Astro');
+        ? labelByLang('Story', '故事')
+        : labelByLang('Science', '科学');
     }
 
     function modeBadgeText() {
       return state.mode === 'kids'
-        ? labelByLang('Kids mode', '儿童模式')
-        : labelByLang('Astro mode', '天文模式');
-    }
-
-    function combineFacts(enFacts, zhFacts) {
-      const enKeys = Object.keys(enFacts);
-      const zhKeys = Object.keys(zhFacts);
-      return Object.fromEntries(enKeys.map((key, index) => [
-        `${key} · ${zhKeys[index]}`,
-        `${enFacts[key]} · ${Object.values(zhFacts)[index]}`
-      ]));
+        ? labelByLang('Story mode', '故事模式')
+        : labelByLang('Science mode', '科学模式');
     }
 
     function factsForWorld(world) {
       if (state.mode === 'kids') {
-        if (state.lang === 'zh') return world.factsKidsZh;
-        if (state.lang === 'en') return world.factsKids;
-        return combineFacts(world.factsKids, world.factsKidsZh);
+        return state.lang === 'zh' ? world.factsKidsZh : world.factsKids;
       }
-      if (state.lang === 'zh') return world.factsAstroZh;
-      if (state.lang === 'en') return world.factsAstro;
-      return combineFacts(world.factsAstro, world.factsAstroZh);
+      return state.lang === 'zh' ? world.factsAstroZh : world.factsAstro;
     }
 
     function storyForWorld(world) {
@@ -2205,15 +2230,47 @@
       const facts = factsForWorld(world);
       const factSentence = Object.entries(facts)
         .slice(0, 3)
-        .map(([key, value]) => `${key}. ${value}.`)
+        .map(([key, value]) => state.lang === 'zh' ? `${key}，${value}。` : `${key}. ${value}.`)
         .join(' ');
 
-      if (state.lang === 'en') return [{ text: `${world.name}. ${storyEn} ${factSentence}`, lang: 'en-US' }];
-      if (state.lang === 'zh') return [{ text: `${world.zh}。${storyZh} ${factSentence}`, lang: 'zh-CN' }];
-      return [
-        { text: `${world.name}. ${storyEn}`, lang: 'en-US' },
-        { text: `${world.zh}。${storyZh}`, lang: 'zh-CN' }
-      ];
+      if (state.lang === 'zh') {
+        return [{
+          text: `${world.zh}。${storyZh} ${factSentence} 继续看看下一颗闪亮的星球吧。`,
+          lang: 'zh-CN'
+        }];
+      }
+
+      const intro = state.mode === 'kids'
+        ? `Hello explorer. Here comes ${world.name}.`
+        : `Now exploring ${world.name}.`;
+      const outro = state.mode === 'kids'
+        ? 'Imagine floating nearby and taking a gentle look around.'
+        : 'Keep looking closely. Each world shows a different chapter of planetary science.';
+
+      return [{
+        text: `${intro} ${storyEn} ${factSentence} ${outro}`,
+        lang: 'en-US'
+      }];
+    }
+
+    function refreshVoices() {
+      if (!speechSupported) return;
+      availableVoices = window.speechSynthesis.getVoices();
+      if (availableVoices.length && voiceRefreshTimer) {
+        window.clearTimeout(voiceRefreshTimer);
+        voiceRefreshTimer = 0;
+      }
+    }
+
+    function pickVoice(lang) {
+      if (!availableVoices.length) refreshVoices();
+      const prefixes = lang.startsWith('zh') ? ['zh', 'cmn'] : ['en'];
+      const matching = availableVoices.filter(voice => prefixes.some(prefix => voice.lang.toLowerCase().startsWith(prefix)));
+      if (!matching.length) return null;
+      const preferredNames = lang.startsWith('zh')
+        ? ['xiaoxiao', 'xiaoyi', 'tingting', 'huihui', 'mei-jia', 'sin-ji']
+        : ['samantha', 'karen', 'moira', 'ava', 'aria', 'allison', 'serena', 'daniel'];
+      return matching.find(voice => preferredNames.some(name => voice.name.toLowerCase().includes(name))) || matching[0];
     }
 
     function stopNarration() {
@@ -2245,8 +2302,14 @@
       narrationQueue.forEach((segment, index) => {
         const utterance = new SpeechSynthesisUtterance(segment.text);
         utterance.lang = segment.lang;
-        utterance.rate = state.mode === 'kids' ? 0.96 : 1.02;
-        utterance.pitch = state.mode === 'kids' ? 1.08 : 0.94;
+        utterance.voice = pickVoice(segment.lang) || null;
+        utterance.rate = state.lang === 'zh'
+          ? (state.mode === 'kids' ? 0.93 : 0.98)
+          : (state.mode === 'kids' ? 0.92 : 0.99);
+        utterance.pitch = state.lang === 'zh'
+          ? (state.mode === 'kids' ? 1.16 : 1.04)
+          : (state.mode === 'kids' ? 1.18 : 1.01);
+        utterance.volume = 0.96;
         utterance.onend = () => {
           if (index === narrationQueue.length - 1 && !state.narrationPaused) {
             updateNarrationStatus(labelByLang(`Narration finished for ${world.name}.`, `${world.zh} 的朗读已完成。`));
@@ -2254,6 +2317,125 @@
         };
         window.speechSynthesis.speak(utterance);
       });
+    }
+
+    function ensureAudioContext() {
+      if (audioState.context) return audioState.context;
+      const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextCtor) return null;
+
+      const context = new AudioContextCtor();
+      const masterGain = context.createGain();
+      masterGain.gain.value = 0;
+      masterGain.connect(context.destination);
+
+      const droneGain = context.createGain();
+      droneGain.gain.value = 0.16;
+      droneGain.connect(masterGain);
+
+      const melodyFilter = context.createBiquadFilter();
+      melodyFilter.type = 'lowpass';
+      melodyFilter.frequency.value = 900;
+
+      const melodyGain = context.createGain();
+      melodyGain.gain.value = 0.06;
+      melodyFilter.connect(melodyGain);
+      melodyGain.connect(masterGain);
+
+      const sparkleGain = context.createGain();
+      sparkleGain.gain.value = 0.035;
+      sparkleGain.connect(masterGain);
+
+      audioState.context = context;
+      audioState.masterGain = masterGain;
+      audioState.droneGain = droneGain;
+      audioState.melodyFilter = melodyFilter;
+      audioState.melodyGain = melodyGain;
+      audioState.sparkleGain = sparkleGain;
+      return context;
+    }
+
+    function startGeneratedMusic() {
+      const context = ensureAudioContext();
+      if (!context) return;
+      if (context.state === 'suspended') context.resume();
+      if (audioState.started) {
+        const now = context.currentTime;
+        audioState.masterGain.gain.cancelScheduledValues(now);
+        audioState.masterGain.gain.linearRampToValueAtTime(0.22, now + 0.8);
+        return;
+      }
+
+      const now = context.currentTime;
+      const droneNotes = [196, 293.66, 392];
+      audioState.droneOscillators = droneNotes.map((frequency, index) => {
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = index === 0 ? 'triangle' : 'sine';
+        osc.frequency.value = frequency;
+        gain.gain.value = index === 0 ? 0.05 : 0.03;
+        osc.connect(gain);
+        gain.connect(audioState.droneGain);
+        osc.start(now);
+        return osc;
+      });
+
+      const melodyOscillator = context.createOscillator();
+      melodyOscillator.type = 'triangle';
+      melodyOscillator.frequency.value = 440;
+      melodyOscillator.connect(audioState.melodyFilter);
+      melodyOscillator.start(now);
+      audioState.melodyOscillator = melodyOscillator;
+      audioState.started = true;
+
+      const melodyNotes = [523.25, 659.25, 783.99, 659.25, 587.33, 523.25, 392, 440];
+      const scheduleMelody = () => {
+        if (!state.music || !audioState.context) return;
+        const note = melodyNotes[Math.floor(Math.random() * melodyNotes.length)];
+        const start = audioState.context.currentTime;
+        const end = start + 1.4;
+        audioState.melodyOscillator.frequency.cancelScheduledValues(start);
+        audioState.melodyOscillator.frequency.setValueAtTime(note, start);
+        audioState.melodyGain.gain.cancelScheduledValues(start);
+        audioState.melodyGain.gain.setValueAtTime(0.01, start);
+        audioState.melodyGain.gain.linearRampToValueAtTime(0.065, start + 0.3);
+        audioState.melodyGain.gain.exponentialRampToValueAtTime(0.012, end);
+        audioState.melodyFilter.frequency.setValueAtTime(700 + Math.random() * 500, start);
+        audioState.melodyTimer = window.setTimeout(scheduleMelody, 1200 + Math.random() * 900);
+      };
+
+      const sparkle = () => {
+        if (!state.music || !audioState.context) return;
+        const bell = context.createOscillator();
+        const gain = context.createGain();
+        bell.type = 'sine';
+        bell.frequency.value = 1046.5 + Math.random() * 800;
+        gain.gain.value = 0.0001;
+        bell.connect(gain);
+        gain.connect(audioState.sparkleGain);
+        const start = context.currentTime;
+        gain.gain.exponentialRampToValueAtTime(0.05, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 1.1);
+        bell.start(start);
+        bell.stop(start + 1.2);
+        audioState.sparkleTimer = window.setTimeout(sparkle, 1800 + Math.random() * 2800);
+      };
+
+      scheduleMelody();
+      sparkle();
+      audioState.masterGain.gain.cancelScheduledValues(now);
+      audioState.masterGain.gain.linearRampToValueAtTime(0.22, now + 1.2);
+    }
+
+    function stopGeneratedMusic() {
+      if (!audioState.context) return;
+      const now = audioState.context.currentTime;
+      audioState.masterGain.gain.cancelScheduledValues(now);
+      audioState.masterGain.gain.linearRampToValueAtTime(0.0001, now + 0.8);
+      window.clearTimeout(audioState.sparkleTimer);
+      window.clearTimeout(audioState.melodyTimer);
+      audioState.sparkleTimer = 0;
+      audioState.melodyTimer = 0;
     }
 
     function toggleNarrationPause() {
@@ -2285,7 +2467,7 @@
     document.getElementById('systemCount').textContent = new Set(worlds.map(w => w.system)).size;
 
     function filterText(value, key) {
-      if (value === 'All') return state.lang === 'zh' ? '全部' : state.lang === 'both' ? 'All 全部' : 'All';
+      if (value === 'All') return state.lang === 'zh' ? '全部' : 'All';
       const world = worlds.find(w => w[key] === value);
       const zhKey = key === 'type'
         ? 'typeZh'
@@ -2322,27 +2504,22 @@
       if (state.overlayOpen) playNarration(getActiveWorld());
     }));
 
-    document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => {
-      state.lang = btn.dataset.lang;
-      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b === btn));
+    languageSelect.addEventListener('change', event => {
+      state.lang = event.target.value;
       render();
       if (state.overlayOpen) playNarration(getActiveWorld());
-    }));
+    });
 
-    musicBtn.addEventListener('click', async () => {
+    musicBtn.addEventListener('click', () => {
       state.music = !state.music;
       musicBtn.classList.toggle('active', state.music);
       musicBtn.textContent = state.music
-        ? labelByLang('Pause BGM', '暂停背景音乐')
-        : `🎵 ${labelByLang('Atmosphere BGM', '氛围背景音乐')}`;
+        ? `🎵 ${labelByLang('Music Off', '关闭音乐')}`
+        : `🎵 ${labelByLang('Music On', '打开音乐')}`;
       if (state.music) {
-        try {
-          await bgm.play();
-        } catch (error) {
-          console.log('Music autoplay blocked until interaction');
-        }
+        startGeneratedMusic();
       } else {
-        bgm.pause();
+        stopGeneratedMusic();
       }
     });
 
@@ -2438,11 +2615,7 @@
         label.setAttribute('x', String(world.size + 12));
         label.setAttribute('y', '-2');
         label.setAttribute('class', 'planet-label');
-        label.textContent = state.lang === 'zh'
-          ? world.zh
-          : state.lang === 'en'
-            ? world.name
-            : `${world.name} ${world.zh}`;
+        label.textContent = state.lang === 'zh' ? world.zh : world.name;
         group.appendChild(label);
 
         const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -2494,7 +2667,7 @@
 
     function renderDetails(active) {
       modeLabel.textContent = modeLabelText();
-      modeSuffix.textContent = state.lang === 'zh' ? '模式' : state.lang === 'both' ? ' mode 模式' : ' mode';
+      modeSuffix.textContent = state.lang === 'zh' ? '模式' : ' mode';
       captionTitle.textContent = `${labelByLang(active.name, active.zh)} · ${labelByLang(active.type, active.typeZh)}`;
       captionText.textContent = storyForWorld(active);
       detailName.textContent = labelByLang(active.name, active.zh);
@@ -2507,7 +2680,7 @@
         .map(([key, value]) => `<div class="fact-box"><strong>${key}</strong><span>${value}</span></div>`)
         .join('');
       openImmersiveBtn.textContent = labelByLang('Open immersive story', '打开沉浸故事');
-      quickNarrateBtn.textContent = labelByLang('Narrate now', '立即朗读');
+      quickNarrateBtn.textContent = labelByLang('Read aloud', '朗读');
     }
 
     function renderOverlay(active) {
@@ -2586,23 +2759,31 @@
     }
 
     function renderStaticText() {
-      document.getElementById('eyebrowText').textContent = labelByLang('Interactive Space Atlas', '双语宇宙地图');
-      document.getElementById('titleText').textContent = labelByLang('Universe of Planets', '宇宙行星图');
+      document.querySelector('[data-mode="kids"]').textContent = labelByLang('🌈 Story Mode', '🌈 故事模式');
+      document.querySelector('[data-mode="astro"]').textContent = labelByLang('🔭 Science Mode', '🔭 科学模式');
+      document.getElementById('eyebrowText').textContent = labelByLang('Storybook Space Atlas', '童话宇宙地图');
+      document.getElementById('titleText').textContent = labelByLang('Universe of Planets', '行星宇宙图');
       document.getElementById('subtitleText').textContent = labelByLang(
-        'A cinematic constellation map for young kids, curious adults, and anyone who wants to wander from the Sun to TRAPPIST-1e without leaving the couch.',
-        '给孩子、好奇的大人和宇宙爱好者的电影感互动星球地图。'
+        'A bright, magical planet playground for kids, families, and curious explorers who want to drift from the Sun to faraway worlds.',
+        '一个明亮、温暖、充满魔法感的星球游乐场，适合孩子、家人和所有想探索宇宙的人。'
       );
       document.getElementById('worldLabel').textContent = labelByLang('worlds', '世界');
       document.getElementById('systemLabel').textContent = labelByLang('systems', '星系');
       document.getElementById('finderTitle').textContent = labelByLang('World Finder', '星球导航');
       document.getElementById('finderText').textContent = labelByLang(
-        'Filter by planet type, warmth, habitability, or star system. Click any card to focus the universe map.',
-        '按行星类型、温度、宜居度和星系筛选，点击卡片可聚焦到宇宙地图。'
+        'Filter by planet type, warmth, habitability, or star system. Tap any card to focus the map and open its story.',
+        '按行星类型、温度、宜居度和星系筛选，点卡片即可聚焦地图并打开故事。'
       );
+      document.getElementById('languageLabel').textContent = labelByLang('Language', '语言');
+      document.getElementById('typeFilterLabel').textContent = labelByLang('Type', '类型');
+      document.getElementById('tempFilterLabel').textContent = labelByLang('Temperature', '温度');
+      document.getElementById('habitFilterLabel').textContent = labelByLang('Habitability', '宜居度');
+      document.getElementById('systemFilterLabel').textContent = labelByLang('System', '星系');
       searchInput.placeholder = labelByLang('Search planet, moon, exoplanet, star', '搜索行星、卫星、系外行星、恒星');
+      languageSelect.value = state.lang;
       musicBtn.textContent = state.music
-        ? labelByLang('Pause BGM', '暂停背景音乐')
-        : `🎵 ${labelByLang('Atmosphere BGM', '氛围背景音乐')}`;
+        ? `🎵 ${labelByLang('Music Off', '关闭音乐')}`
+        : `🎵 ${labelByLang('Music On', '打开音乐')}`;
     }
 
     function render() {
@@ -2633,7 +2814,16 @@
       if (event.key === 'Escape' && state.overlayOpen) closeOverlay();
     });
 
+    if (speechSupported) {
+      refreshVoices();
+      window.speechSynthesis.onvoiceschanged = refreshVoices;
+      if (!availableVoices.length) {
+        voiceRefreshTimer = window.setTimeout(refreshVoices, 400);
+      }
+    }
+
     window.addEventListener('beforeunload', stopNarration);
+    window.addEventListener('beforeunload', stopGeneratedMusic);
     window.addEventListener('beforeunload', destroyThreeScene);
 
     render();
